@@ -238,16 +238,28 @@
 
 @media (max-width: 768px) {
   .header-container {
-    padding: 15px 20px;
-    gap: 15px;
+    padding: 10px 15px;
+    gap: 8px;
+  }
+
+  .logo {
+    font-size: 1rem;
+  }
+
+  .logo img {
+    height: 35px;
+  }
+
+  .logo h1 {
+    font-size: 1rem;
   }
 
   .nav-menu {
     position: fixed;
-    top: 70px;
+    top: 60px;
     right: -100%;
     width: 70%;
-    height: calc(100vh - 70px);
+    height: calc(100vh - 60px);
     background: white;
     flex-direction: column;
     padding: 30px;
@@ -267,29 +279,55 @@
     font-size: 1.1rem;
   }
 
+  .header-actions {
+    gap: 5px;
+  }
+
   .search-form {
     display: flex;
-    width: 100%;
-    max-width: 200px;
+    max-width: 150px;
   }
 
   .search-form input {
-    font-size: 0.9rem;
-    padding: 8px 12px;
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    width: 110px;
   }
 
-  .header-actions {
-    gap: 10px;
+  .search-form button {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+  }
+
+  .cart-icon {
+    font-size: 1.2rem;
+    padding: 6px;
+  }
+
+  .cart-badge {
+    width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
+    top: -6px;
+    left: -6px;
+  }
+
+  .user-btn,
+  .login-btn {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+
+  .user-btn span,
+  .login-btn span {
+    display: none;
   }
 
   .mobile-menu-toggle {
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  .user-btn span,
-  .login-btn span {
-    display: none;
+    font-size: 1.3rem;
+    padding: 6px;
   }
 }
