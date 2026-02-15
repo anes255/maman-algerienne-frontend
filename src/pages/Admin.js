@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaBox, FaNewspaper, FaAd, FaShoppingCart, FaPalette, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaChartLine } from 'react-icons/fa';
+import { FaBox, FaNewspaper, FaAd, FaShoppingCart, FaPalette, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaChartLine, FaBars } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { getProducts, createProduct, updateProduct, deleteProduct, getArticles, createArticle, updateArticle, deleteArticle, getAds, createAd, updateAd, deleteAd, getOrders, updateOrder, deleteOrder, getTheme, updateTheme, getStats } from '../services/api';
 import { getImageUrl } from '../config';
@@ -28,6 +28,7 @@ const Admin = () => {
   const [current, setCurrent] = useState(null);
   const [blocks, setBlocks] = useState([]);
   const [contentImgs, setContentImgs] = useState([]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => { loadData(); }, [tab]);
 
@@ -100,13 +101,29 @@ const Admin = () => {
 
   const tabType = tab === 'products' ? 'product' : tab === 'articles' ? 'article' : 'ad';
 
+  const handleTabChange = (newTab) => {
+    setTab(newTab);
+    setSidebarOpen(false); // Close sidebar on mobile after selection
+  };
+
   return (
     <div className="admin-dashboard">
-      <aside className="admin-sidebar">
+      {/* Mobile Header */}
+      <div className="mobile-header">
+        <button className="hamburger-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
+          <FaBars />
+        </button>
+        <h2>لوحة التحكم</h2>
+      </div>
+
+      {/* Sidebar Overlay for Mobile */}
+      {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
+
+      <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header"><h2>لوحة التحكم</h2></div>
         <nav className="sidebar-nav">
           {[['dashboard', <FaChartLine />, 'الإحصائيات'], ['products', <FaBox />, 'المنتجات'], ['articles', <FaNewspaper />, 'المقالات'], ['ads', <FaAd />, 'الإعلانات'], ['orders', <FaShoppingCart />, 'الطلبات'], ['theme', <FaPalette />, 'المظهر']].map(([k, icon, label]) => (
-            <button key={k} className={tab === k ? 'active' : ''} onClick={() => setTab(k)}>{icon} {label}</button>
+            <button key={k} className={tab === k ? 'active' : ''} onClick={() => handleTabChange(k)}>{icon} <span>{label}</span></button>
           ))}
         </nav>
       </aside>
@@ -126,46 +143,135 @@ const Admin = () => {
 
           {tab === 'products' && (
             <motion.div key="prods" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <div className="section-header"><h1>إدارة المنتجات</h1><button className="add-btn" onClick={openCreate}><FaPlus /> إضافة منتج</button></div>
-              <div className="table-container"><table className="admin-table"><thead><tr><th>الصورة</th><th>الاسم</th><th>السعر</th><th>الفئة</th><th>المخزون</th><th>الإجراءات</th></tr></thead><tbody>
-                {products.map(p => <tr key={p._id}><td><img src={getImageUrl(p.image)} alt={p.name} className="table-image" /></td><td>{p.name}</td><td>{p.price} دج</td><td>{p.category}</td><td>{p.stock}</td><td><button className="edit-btn" onClick={() => openEdit(p)}><FaEdit /></button><button className="delete-btn" onClick={() => handleDelete(p._id, 'product')}><FaTrash /></button></td></tr>)}
-              </tbody></table></div>
+              <div className="section-header">
+                <h1>إدارة المنتجات</h1>
+                <button className="add-btn" onClick={openCreate}><FaPlus /> <span>إضافة منتج</span></button>
+              </div>
+              <div className="table-container">
+                <table className="admin-table">
+                  <thead>
+                    <tr><th>الصورة</th><th>الاسم</th><th>السعر</th><th>الفئة</th><th>المخزون</th><th>الإجراءات</th></tr>
+                  </thead>
+                  <tbody>
+                    {products.map(p => (
+                      <tr key={p._id}>
+                        <td data-label="الصورة"><img src={getImageUrl(p.image)} alt={p.name} className="table-image" /></td>
+                        <td data-label="الاسم">{p.name}</td>
+                        <td data-label="السعر">{p.price} دج</td>
+                        <td data-label="الفئة">{p.category}</td>
+                        <td data-label="المخزون">{p.stock}</td>
+                        <td data-label="الإجراءات">
+                          <div className="action-buttons">
+                            <button className="edit-btn" onClick={() => openEdit(p)}><FaEdit /></button>
+                            <button className="delete-btn" onClick={() => handleDelete(p._id, 'product')}><FaTrash /></button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </motion.div>
           )}
 
           {tab === 'articles' && (
             <motion.div key="arts" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <div className="section-header"><h1>إدارة المقالات</h1><button className="add-btn" onClick={openCreate}><FaPlus /> إضافة مقال</button></div>
-              <div className="table-container"><table className="admin-table"><thead><tr><th>الصورة</th><th>العنوان</th><th>الفئة</th><th>المشاهدات</th><th>التاريخ</th><th>الإجراءات</th></tr></thead><tbody>
-                {articles.map(a => <tr key={a._id}><td><img src={getImageUrl(a.image)} alt={a.title} className="table-image" /></td><td>{a.title}</td><td>{a.category}</td><td>{a.views}</td><td>{new Date(a.createdAt).toLocaleDateString('ar-DZ')}</td><td><button className="edit-btn" onClick={() => openEdit(a)}><FaEdit /></button><button className="delete-btn" onClick={() => handleDelete(a._id, 'article')}><FaTrash /></button></td></tr>)}
-              </tbody></table></div>
+              <div className="section-header">
+                <h1>إدارة المقالات</h1>
+                <button className="add-btn" onClick={openCreate}><FaPlus /> <span>إضافة مقال</span></button>
+              </div>
+              <div className="table-container">
+                <table className="admin-table">
+                  <thead>
+                    <tr><th>الصورة</th><th>العنوان</th><th>الفئة</th><th>المشاهدات</th><th>التاريخ</th><th>الإجراءات</th></tr>
+                  </thead>
+                  <tbody>
+                    {articles.map(a => (
+                      <tr key={a._id}>
+                        <td data-label="الصورة"><img src={getImageUrl(a.image)} alt={a.title} className="table-image" /></td>
+                        <td data-label="العنوان">{a.title}</td>
+                        <td data-label="الفئة">{a.category}</td>
+                        <td data-label="المشاهدات">{a.views}</td>
+                        <td data-label="التاريخ">{new Date(a.createdAt).toLocaleDateString('ar-DZ')}</td>
+                        <td data-label="الإجراءات">
+                          <div className="action-buttons">
+                            <button className="edit-btn" onClick={() => openEdit(a)}><FaEdit /></button>
+                            <button className="delete-btn" onClick={() => handleDelete(a._id, 'article')}><FaTrash /></button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </motion.div>
           )}
 
           {tab === 'ads' && (
             <motion.div key="ads" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <div className="section-header"><h1>إدارة الإعلانات</h1><button className="add-btn" onClick={openCreate}><FaPlus /> إضافة إعلان</button></div>
-              <div className="ads-grid">{ads.map(ad => (
-                <div key={ad._id} className="ad-card">
-                  <img src={getImageUrl(ad.image)} alt={ad.title} />
-                  <div className="ad-info"><h3>{ad.title}</h3><span className={`status ${ad.active ? 'active' : 'inactive'}`}>{ad.active ? 'نشط' : 'غير نشط'}</span>
-                    <div className="ad-actions"><button onClick={() => openEdit(ad)}><FaEdit /> تعديل</button><button onClick={() => handleDelete(ad._id, 'ad')}><FaTrash /> حذف</button></div>
+              <div className="section-header">
+                <h1>إدارة الإعلانات</h1>
+                <button className="add-btn" onClick={openCreate}><FaPlus /> <span>إضافة إعلان</span></button>
+              </div>
+              <div className="ads-grid">
+                {ads.map(ad => (
+                  <div key={ad._id} className="ad-card">
+                    <img src={getImageUrl(ad.image)} alt={ad.title} />
+                    <div className="ad-info">
+                      <h3>{ad.title}</h3>
+                      <span className={`status ${ad.active ? 'active' : 'inactive'}`}>{ad.active ? 'نشط' : 'غير نشط'}</span>
+                      <div className="ad-actions">
+                        <button onClick={() => openEdit(ad)}><FaEdit /> تعديل</button>
+                        <button onClick={() => handleDelete(ad._id, 'ad')}><FaTrash /> حذف</button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}</div>
+                ))}
+              </div>
             </motion.div>
           )}
 
           {tab === 'orders' && (
             <motion.div key="orders" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <h1>إدارة الطلبات</h1>
-              <div className="table-container"><table className="admin-table"><thead><tr><th>رقم الطلب</th><th>العميل</th><th>الهاتف</th><th>العنوان</th><th>المبلغ</th><th>الحالة</th><th>التاريخ</th><th>إجراءات</th></tr></thead><tbody>
-                {orders.map(o => <tr key={o._id}><td>{o.orderNumber}</td><td>{o.customerName}</td><td>{o.customerPhone}</td>
-                  <td>{o.shippingAddress && <div style={{ fontSize: '0.9em' }}>{o.shippingAddress.street}<br />{o.shippingAddress.city}, {o.shippingAddress.state}</div>}</td>
-                  <td>{o.totalAmount} دج</td><td><select value={o.status} onChange={e => changeOrderStatus(o._id, e.target.value)} className="status-select">
-                    <option value="pending">قيد الانتظار</option><option value="processing">قيد المعالجة</option><option value="shipped">تم الشحن</option><option value="delivered">تم التوصيل</option><option value="cancelled">ملغي</option>
-                  </select></td><td>{new Date(o.createdAt).toLocaleDateString('ar-DZ')}</td><td><button className="delete-btn" onClick={() => handleDelete(o._id, 'order')}><FaTrash /></button></td></tr>)}
-              </tbody></table></div>
+              <div className="table-container">
+                <table className="admin-table">
+                  <thead>
+                    <tr><th>رقم الطلب</th><th>العميل</th><th>الهاتف</th><th>العنوان</th><th>المبلغ</th><th>الحالة</th><th>التاريخ</th><th>إجراءات</th></tr>
+                  </thead>
+                  <tbody>
+                    {orders.map(o => (
+                      <tr key={o._id}>
+                        <td data-label="رقم الطلب">{o.orderNumber}</td>
+                        <td data-label="العميل">{o.customerName}</td>
+                        <td data-label="الهاتف">{o.customerPhone}</td>
+                        <td data-label="العنوان">
+                          {o.shippingAddress && (
+                            <div style={{ fontSize: '0.9em' }}>
+                              {o.shippingAddress.street}<br />
+                              {o.shippingAddress.city}, {o.shippingAddress.state}
+                            </div>
+                          )}
+                        </td>
+                        <td data-label="المبلغ">{o.totalAmount} دج</td>
+                        <td data-label="الحالة">
+                          <select value={o.status} onChange={e => changeOrderStatus(o._id, e.target.value)} className="status-select">
+                            <option value="pending">قيد الانتظار</option>
+                            <option value="processing">قيد المعالجة</option>
+                            <option value="shipped">تم الشحن</option>
+                            <option value="delivered">تم التوصيل</option>
+                            <option value="cancelled">ملغي</option>
+                          </select>
+                        </td>
+                        <td data-label="التاريخ">{new Date(o.createdAt).toLocaleDateString('ar-DZ')}</td>
+                        <td data-label="إجراءات">
+                          <button className="delete-btn" onClick={() => handleDelete(o._id, 'order')}><FaTrash /></button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </motion.div>
           )}
 
