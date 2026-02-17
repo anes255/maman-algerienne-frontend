@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaFilter } from 'react-icons/fa';
 import { getArticles, getCategories } from '../services/api';
@@ -6,21 +7,28 @@ import ArticleCard from '../components/ArticleCard';
 import '../styles/Articles.css';
 
 const Articles = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [articles, setArticles] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [cats, setCats] = useState([]);
-  const [selCat, setSelCat] = useState('all');
   const [loading, setLoading] = useState(true);
+
+  const selCat = new URLSearchParams(location.search).get('category') || 'all';
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([getArticles(), getCategories()]).then(([a, c]) => { setArticles(a.data); setCats(c.data.articles || []); })
-    .catch(console.error).finally(() => setLoading(false));
+    Promise.all([getArticles(), getCategories()]).then(([a, c]) => {
+      setArticles(a.data);
+      setCats(c.data.articles || []);
+    }).catch(console.error).finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
     setFiltered(selCat === 'all' ? articles : articles.filter(a => a.category === selCat));
   }, [articles, selCat]);
+
+  const changeCat = (c) => navigate(c === 'all' ? '/articles' : `/articles?category=${c}`);
 
   return (
     <div className="articles-page">
@@ -32,8 +40,14 @@ const Articles = () => {
           <div className="filter-section">
             <h3><FaFilter /> الفئات</h3>
             <div className="filter-options">
-              <label className={selCat === 'all' ? 'active' : ''}><input type="radio" name="cat" value="all" checked={selCat === 'all'} onChange={e => setSelCat(e.target.value)} /><span>الكل</span></label>
-              {cats.map(c => <label key={c} className={selCat === c ? 'active' : ''}><input type="radio" name="cat" value={c} checked={selCat === c} onChange={e => setSelCat(e.target.value)} /><span>{c}</span></label>)}
+              <label className={selCat === 'all' ? 'active' : ''} onClick={() => changeCat('all')}>
+                <input type="radio" name="cat" value="all" checked={selCat === 'all'} readOnly /><span>الكل</span>
+              </label>
+              {cats.map(c => (
+                <label key={c} className={selCat === c ? 'active' : ''} onClick={() => changeCat(c)}>
+                  <input type="radio" name="cat" value={c} checked={selCat === c} readOnly /><span>{c}</span>
+                </label>
+              ))}
             </div>
           </div>
         </motion.aside>
