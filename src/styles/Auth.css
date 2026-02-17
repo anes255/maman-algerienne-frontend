@@ -138,8 +138,12 @@
 }
 
 @media (max-width: 768px) {
+  .auth-page {
+    padding: 20px 15px;
+  }
+
   .auth-card {
-    padding: 40px 25px;
+    padding: 30px 20px;
   }
 
   .auth-header h1 {
@@ -150,5 +154,15 @@
     width: 60px;
     height: 60px;
     font-size: 1.5rem;
+  }
+
+  .auth-form input {
+    font-size: 16px; /* prevent iOS zoom */
+    padding: 13px 15px;
+  }
+
+  .auth-submit-btn {
+    font-size: 1rem;
+    padding: 14px;
   }
 }
