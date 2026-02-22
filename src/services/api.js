@@ -49,5 +49,6 @@ export const updateTheme = (data) => api.put('/theme', data);
 // Stats & Categories
 export const getStats = () => api.get('/stats');
 export const getCategories = () => api.get('/categories');
+export const trackVisit = () => api.post('/track-visit');
 
 export default api;
