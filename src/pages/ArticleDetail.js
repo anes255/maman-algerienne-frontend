@@ -19,6 +19,16 @@ const extractVideo = (url) => {
   return null;
 };
 
+// Render text with line breaks preserved
+const TextWithBreaks = ({ text, style }) => {
+  if (!text) return null;
+  return (
+    <div style={{ ...style, whiteSpace: 'pre-line' }}>
+      {text}
+    </div>
+  );
+};
+
 const ArticleDetail = () => {
   const { id } = useParams();
   const nav = useNavigate();
@@ -32,6 +42,8 @@ const ArticleDetail = () => {
 
   if (loading) return <div className="loading-container"><div className="spinner"></div><p>جاري التحميل...</p></div>;
   if (!article) return <div className="not-found"><h2>المقال غير موجود</h2><button onClick={() => nav('/articles')} className="back-btn">العودة</button></div>;
+
+  const content = article.contentAr || article.content || '';
 
   return (
     <div className="article-detail-page">
@@ -50,24 +62,43 @@ const ArticleDetail = () => {
               {article.author && <div className="meta-item"><FaUser /><span>{article.author}</span></div>}
             </div>
           </div>
+
+          {article.image && (
+            <div className="article-hero-image">
+              <img src={getImageUrl(article.image)} alt={article.title} />
+            </div>
+          )}
+
           <div className="article-content">
             {article.contentBlocks?.length > 0 ? (
               <div className="flexible-content">
                 {[...article.contentBlocks].sort((a, b) => a.order - b.order).map((block, idx) => (
                   <motion.div key={block.id || idx} className={`content-block block-${block.type}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-                    {block.type === 'heading' && React.createElement(block.settings?.headingSize || block.settings?.size || 'h2', { style: { textAlign: block.settings?.alignment || block.settings?.align || 'right' } }, block.content)}
+                    {block.type === 'heading' && React.createElement(
+                      block.settings?.headingSize || block.settings?.size || 'h2',
+                      { style: { textAlign: block.settings?.alignment || block.settings?.align || 'right' } },
+                      block.content
+                    )}
                     {block.type === 'paragraph' && (
-                      <div style={{ textAlign: block.settings?.alignment || block.settings?.align || 'right' }}>
-                        {block.content?.split('\n').map((line, i) => (
-                          <p key={i}>{line || '\u00A0'}</p>
-                        ))}
+                      <TextWithBreaks
+                        text={block.content}
+                        style={{ textAlign: block.settings?.alignment || block.settings?.align || 'right' }}
+                      />
+                    )}
+                    {block.type === 'image' && block.imageUrl && (
+                      <div className={`block-image size-${block.settings?.imageSize || block.settings?.size || 'medium'}`}>
+                        <img src={getImageUrl(block.imageUrl)} alt="content" />
                       </div>
                     )}
-                    {block.type === 'image' && block.imageUrl && <div className={`block-image size-${block.settings?.size || 'medium'}`}><img src={getImageUrl(block.imageUrl)} alt="content" /></div>}
                     {block.type === 'video' && block.videoUrl && extractVideo(block.videoUrl) && (
-                      <div className={`block-video size-${block.settings?.size || 'large'}`}>
+                      <div className={`block-video size-${block.settings?.videoSize || block.settings?.size || 'large'}`}>
                         <div className="video-wrapper">
-                          <iframe src={extractVideo(block.videoUrl).platform === 'youtube' ? `https://www.youtube.com/embed/${extractVideo(block.videoUrl).id}` : `https://player.vimeo.com/video/${extractVideo(block.videoUrl).id}`} frameBorder="0" allowFullScreen title="video" />
+                          <iframe
+                            src={extractVideo(block.videoUrl).platform === 'youtube'
+                              ? `https://www.youtube.com/embed/${extractVideo(block.videoUrl).id}`
+                              : `https://player.vimeo.com/video/${extractVideo(block.videoUrl).id}`}
+                            frameBorder="0" allowFullScreen title="video"
+                          />
                         </div>
                       </div>
                     )}
@@ -75,10 +106,19 @@ const ArticleDetail = () => {
                 ))}
               </div>
             ) : (
-              <div className="content-text">{(article.contentAr || article.content).split('\n').map((p, i) => <p key={i}>{p || '\u00A0'}</p>)}</div>
+              <div className="content-text" style={{ whiteSpace: 'pre-line' }}>
+                {content}
+              </div>
             )}
             {article.contentImages?.length > 0 && (!article.contentBlocks || article.contentBlocks.length === 0) && (
-              <div className="content-images"><h3>صور إضافية</h3><div className="images-grid">{article.contentImages.map((img, i) => <div key={i} className="content-image"><img src={getImageUrl(img)} alt={`صورة ${i + 1}`} /></div>)}</div></div>
+              <div className="content-images">
+                <h3>صور إضافية</h3>
+                <div className="images-grid">
+                  {article.contentImages.map((img, i) => (
+                    <div key={i} className="content-image"><img src={getImageUrl(img)} alt={`صورة ${i + 1}`} /></div>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
           <div className="article-footer">
