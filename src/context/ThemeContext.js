@@ -37,6 +37,22 @@ export const ThemeProvider = ({ children }) => {
     r.style.setProperty('--background-color', t.backgroundColor);
     r.style.setProperty('--text-color', t.textColor);
     r.style.setProperty('--font-family', t.fontFamily);
+
+    // Apply font family to body
+    if (t.fontFamily) {
+      document.body.style.fontFamily = t.fontFamily;
+      // Load Google Font dynamically
+      const fontName = t.fontFamily.split(',')[0].trim();
+      const existingLink = document.querySelector(`link[data-font="${fontName}"]`);
+      if (!existingLink && fontName !== 'Cairo') {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.dataset.font = fontName;
+        link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(fontName)}:wght@300;400;500;600;700&display=swap`;
+        document.head.appendChild(link);
+      }
+    }
+
     if (t.favicon) {
       const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
       link.type = 'image/x-icon';
