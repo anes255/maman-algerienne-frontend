@@ -55,8 +55,14 @@ const ArticleDetail = () => {
               <div className="flexible-content">
                 {[...article.contentBlocks].sort((a, b) => a.order - b.order).map((block, idx) => (
                   <motion.div key={block.id || idx} className={`content-block block-${block.type}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-                    {block.type === 'heading' && React.createElement(block.settings?.size || 'h2', { style: { textAlign: block.settings?.align || 'right' } }, block.content)}
-                    {block.type === 'paragraph' && <p style={{ textAlign: block.settings?.align || 'right' }}>{block.content}</p>}
+                    {block.type === 'heading' && React.createElement(block.settings?.headingSize || block.settings?.size || 'h2', { style: { textAlign: block.settings?.alignment || block.settings?.align || 'right' } }, block.content)}
+                    {block.type === 'paragraph' && (
+                      <div style={{ textAlign: block.settings?.alignment || block.settings?.align || 'right' }}>
+                        {block.content?.split('\n').map((line, i) => (
+                          <p key={i}>{line || '\u00A0'}</p>
+                        ))}
+                      </div>
+                    )}
                     {block.type === 'image' && block.imageUrl && <div className={`block-image size-${block.settings?.size || 'medium'}`}><img src={getImageUrl(block.imageUrl)} alt="content" /></div>}
                     {block.type === 'video' && block.videoUrl && extractVideo(block.videoUrl) && (
                       <div className={`block-video size-${block.settings?.size || 'large'}`}>
@@ -69,7 +75,7 @@ const ArticleDetail = () => {
                 ))}
               </div>
             ) : (
-              <div className="content-text">{(article.contentAr || article.content).split('\n').map((p, i) => <p key={i}>{p}</p>)}</div>
+              <div className="content-text">{(article.contentAr || article.content).split('\n').map((p, i) => <p key={i}>{p || '\u00A0'}</p>)}</div>
             )}
             {article.contentImages?.length > 0 && (!article.contentBlocks || article.contentBlocks.length === 0) && (
               <div className="content-images"><h3>صور إضافية</h3><div className="images-grid">{article.contentImages.map((img, i) => <div key={i} className="content-image"><img src={getImageUrl(img)} alt={`صورة ${i + 1}`} /></div>)}</div></div>
