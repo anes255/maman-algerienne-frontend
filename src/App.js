@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { trackVisit } from './services/api';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -31,6 +32,7 @@ const AdminRoute = ({ children }) => {
 };
 
 function App() {
+  useEffect(() => { trackVisit().catch(() => {}); }, []);
   return (
     <ThemeProvider>
       <AuthProvider>
