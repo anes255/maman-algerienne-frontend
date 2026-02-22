@@ -147,9 +147,38 @@ const Admin = () => {
             <motion.div key="dash" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="dashboard-stats">
               <h1>الإحصائيات</h1>
               <div className="stats-grid">
-                {[[<FaBox />, stats.products, 'المنتجات'], [<FaNewspaper />, stats.articles, 'المقالات'], [<FaShoppingCart />, stats.orders, 'الطلبات'], [<FaChartLine />, `${stats.revenue || 0} دج`, 'الإيرادات']].map(([icon, val, label], i) => (
+                {[
+                  [<FaBox />, stats.products, 'المنتجات'],
+                  [<FaNewspaper />, stats.articles, 'المقالات'],
+                  [<FaShoppingCart />, stats.orders, 'الطلبات'],
+                  [<FaChartLine />, `${stats.revenue || 0} دج`, 'الإيرادات']
+                ].map(([icon, val, label], i) => (
                   <div key={i} className="stat-card"><div className="stat-icon">{icon}</div><h3>{val || 0}</h3><p>{label}</p></div>
                 ))}
+              </div>
+
+              <h2 style={{ fontSize: '1.4rem', color: '#2d3748', marginBottom: '20px', fontWeight: 600 }}>الزوار والمستخدمين</h2>
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #48bb78, #38a169)' }}>👥</div>
+                  <h3>{stats.todayVisits || 0}</h3>
+                  <p>زيارات اليوم</p>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #ed8936, #dd6b20)' }}>👤</div>
+                  <h3>{stats.todayUniqueVisitors || 0}</h3>
+                  <p>زوار فريدين اليوم</p>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #9f7aea, #805ad5)' }}>📊</div>
+                  <h3>{stats.totalVisits || 0}</h3>
+                  <p>إجمالي الزيارات</p>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #4299e1, #3182ce)' }}>🧑‍🤝‍🧑</div>
+                  <h3>{stats.users || 0}</h3>
+                  <p>المستخدمين المسجلين</p>
+                </div>
               </div>
             </motion.div>
           )}
