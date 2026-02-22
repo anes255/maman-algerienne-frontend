@@ -15,6 +15,19 @@ const articleCats = [
   { value: 'names', label: 'الأسماء', icon: '👶' }
 ];
 
+const fontOptions = [
+  { value: 'Cairo, sans-serif', label: 'Cairo (افتراضي)' },
+  { value: 'Tajawal, sans-serif', label: 'Tajawal' },
+  { value: 'Almarai, sans-serif', label: 'Almarai' },
+  { value: 'Changa, sans-serif', label: 'Changa' },
+  { value: 'El Messiri, sans-serif', label: 'El Messiri' },
+  { value: 'Amiri, serif', label: 'Amiri' },
+  { value: 'Noto Kufi Arabic, sans-serif', label: 'Noto Kufi Arabic' },
+  { value: 'Readex Pro, sans-serif', label: 'Readex Pro' },
+  { value: 'IBM Plex Sans Arabic, sans-serif', label: 'IBM Plex Sans Arabic' },
+  { value: 'Rubik, sans-serif', label: 'Rubik' },
+];
+
 const Admin = () => {
   const [tab, setTab] = useState('dashboard');
   const [stats, setStats] = useState({});
@@ -103,7 +116,7 @@ const Admin = () => {
 
   const handleTabChange = (newTab) => {
     setTab(newTab);
-    setSidebarOpen(false); // Close sidebar on mobile after selection
+    setSidebarOpen(false);
   };
 
   return (
@@ -284,11 +297,26 @@ const Admin = () => {
                   <div className="form-group"><label>اللون الثانوي</label><input type="color" name="secondaryColor" defaultValue={theme.secondaryColor} /></div>
                   <div className="form-group"><label>اللون المميز</label><input type="color" name="accentColor" defaultValue={theme.accentColor} /></div>
                 </div>
+                <div className="form-group">
+                  <label>الخط</label>
+                  <select name="fontFamily" defaultValue={theme.fontFamily || 'Cairo, sans-serif'} className="category-select">
+                    {fontOptions.map(f => (
+                      <option key={f.value} value={f.value}>{f.label}</option>
+                    ))}
+                  </select>
+                  <p style={{ fontSize: '0.85rem', color: '#718096', marginTop: '8px' }}>اختر الخط المناسب لموقعك</p>
+                </div>
                 <div className="form-group"><label>نص الشعار</label><input type="text" name="logoText" defaultValue={theme.logoText} /></div>
                 <div className="form-row">
                   <div className="form-group"><label>صورة الشعار</label><input type="file" name="logoImage" accept="image/*" /></div>
                   <div className="form-group"><label>الأيقونة</label><input type="file" name="favicon" accept="image/*" /></div>
                 </div>
+                {theme.logoImage && (
+                  <div className="form-group">
+                    <label>الشعار الحالي</label>
+                    <img src={getImageUrl(theme.logoImage)} alt="logo" className="preview-image" style={{ maxWidth: '150px' }} />
+                  </div>
+                )}
                 <button type="submit" className="save-btn">حفظ التغييرات</button>
               </form>
             </motion.div>
@@ -296,55 +324,145 @@ const Admin = () => {
         </AnimatePresence>
       </main>
 
+      {/* Modal - Full page on mobile */}
       <AnimatePresence>
         {modal && (
-          <motion.div className="modal-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setModal(false)}>
-            <motion.div className="modal-content" initial={{ scale: 0.8 }} animate={{ scale: 1 }} exit={{ scale: 0.8 }} onClick={e => e.stopPropagation()}>
-              <h2>{mode === 'create' ? 'إضافة' : 'تعديل'} {tab === 'products' ? 'منتج' : tab === 'articles' ? 'مقال' : 'إعلان'}</h2>
-              <form onSubmit={e => handleSubmit(e, tabType)}>
-                <div className="form-group"><label>الاسم/العنوان</label>
-                  <input type="text" name={tab === 'articles' ? 'title' : 'name'} defaultValue={current ? (tab === 'articles' ? current.title : current.name) : ''} required />
-                </div>
-                {tab !== 'ads' && (<>
-                  <div className="form-group"><label>الاسم/العنوان بالعربية</label>
-                    <input type="text" name={tab === 'articles' ? 'titleAr' : 'nameAr'} defaultValue={current ? (tab === 'articles' ? current.titleAr : current.nameAr) : ''} />
+          <motion.div className="modal-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div className="modal-content" initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }}>
+              <div className="modal-header">
+                <h2>{mode === 'create' ? 'إضافة' : 'تعديل'} {tab === 'products' ? 'منتج' : tab === 'articles' ? 'مقال' : 'إعلان'}</h2>
+                <button type="button" className="modal-close-btn" onClick={() => setModal(false)}><FaTimes /></button>
+              </div>
+
+              <div className="modal-body">
+                <form onSubmit={e => handleSubmit(e, tabType)} id="admin-form">
+                  {/* Title / Name */}
+                  <div className="form-group">
+                    <label>{tab === 'articles' ? 'العنوان' : tab === 'ads' ? 'عنوان الإعلان' : 'اسم المنتج'}</label>
+                    <input type="text" name={tab === 'articles' ? 'title' : 'name'} defaultValue={current ? (tab === 'articles' ? current.title : current.name) : ''} required placeholder={tab === 'articles' ? 'أدخل عنوان المقال...' : tab === 'ads' ? 'أدخل عنوان الإعلان...' : 'أدخل اسم المنتج...'} />
                   </div>
-                  <div className="form-group"><label>الوصف/المحتوى</label>
-                    <textarea name={tab === 'articles' ? 'content' : 'description'} rows="4" defaultValue={current ? (tab === 'articles' ? current.content : current.description) : ''} required />
+
+                  {/* Arabic Title / Name */}
+                  {tab !== 'ads' && (
+                    <div className="form-group">
+                      <label>{tab === 'articles' ? 'العنوان بالعربية' : 'الاسم بالعربية'}</label>
+                      <input type="text" name={tab === 'articles' ? 'titleAr' : 'nameAr'} defaultValue={current ? (tab === 'articles' ? current.titleAr : current.nameAr) : ''} placeholder="اختياري - العنوان بالعربية" />
+                    </div>
+                  )}
+
+                  {/* Description / Content */}
+                  {tab !== 'ads' && (
+                    <div className="form-group">
+                      <label>{tab === 'articles' ? 'المحتوى' : 'الوصف'}</label>
+                      <textarea name={tab === 'articles' ? 'content' : 'description'} rows="4" defaultValue={current ? (tab === 'articles' ? current.content : current.description) : ''} required placeholder={tab === 'articles' ? 'اكتب محتوى المقال...' : 'اكتب وصف المنتج...'} />
+                    </div>
+                  )}
+
+                  {/* Category */}
+                  {tab !== 'ads' && (
+                    tab === 'articles' ? (
+                      <div className="form-group">
+                        <label>الفئة</label>
+                        <select name="category" defaultValue={current?.category || ''} required className="category-select">
+                          <option value="">اختر الفئة...</option>
+                          {articleCats.map(c => <option key={c.value} value={c.value}>{c.icon} {c.label}</option>)}
+                        </select>
+                      </div>
+                    ) : (
+                      <div className="form-group">
+                        <label>الفئة</label>
+                        <input type="text" name="category" defaultValue={current?.category || ''} required placeholder="مثال: العناية بالبشرة" />
+                      </div>
+                    )
+                  )}
+
+                  {/* Product specific fields */}
+                  {tab === 'products' && (
+                    <>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>السعر (دج)</label>
+                          <input type="number" name="price" defaultValue={current?.price || ''} required placeholder="0" />
+                        </div>
+                        <div className="form-group">
+                          <label>المخزون</label>
+                          <input type="number" name="stock" defaultValue={current?.stock || 0} placeholder="0" />
+                        </div>
+                      </div>
+                      <div className="form-group checkbox-group">
+                        <label><input type="checkbox" name="featured" defaultChecked={current?.featured} /> منتج مميز (يظهر في الصفحة الرئيسية)</label>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Article featured checkbox */}
+                  {tab === 'articles' && (
+                    <div className="form-group checkbox-group">
+                      <label><input type="checkbox" name="featured" defaultChecked={current?.featured} /> مقال مميز (يظهر في الصفحة الرئيسية)</label>
+                    </div>
+                  )}
+
+                  {/* Ads specific fields */}
+                  {tab === 'ads' && (
+                    <>
+                      <div className="form-group">
+                        <label>الرابط</label>
+                        <input type="text" name="link" defaultValue={current?.link || ''} placeholder="https://example.com" />
+                      </div>
+                      <div className="form-group">
+                        <label>الموقع</label>
+                        <select name="position" defaultValue={current?.position || 'banner'} className="category-select">
+                          <option value="hero">سلايدر رئيسي (Hero)</option>
+                          <option value="sidebar">شريط جانبي (Sidebar)</option>
+                          <option value="banner">بانر (Banner)</option>
+                          <option value="sponsor">راعي (Sponsor)</option>
+                        </select>
+                      </div>
+                      <div className="form-group checkbox-group">
+                        <label><input type="checkbox" name="active" defaultChecked={current?.active ?? true} /> نشط</label>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Main Image */}
+                  <div className="form-group">
+                    <label>{tab === 'articles' ? 'صورة المقال الرئيسية' : 'الصورة'}</label>
+                    <input type="file" name="image" accept="image/*" />
+                    {current?.image && (
+                      <div className="current-image-preview">
+                        <span>الصورة الحالية:</span>
+                        <img src={getImageUrl(current.image)} alt="preview" className="preview-image" />
+                      </div>
+                    )}
                   </div>
-                  {tab === 'articles' ? (
-                    <div className="form-group"><label>الفئة</label><select name="category" defaultValue={current?.category || ''} required className="category-select">
-                      <option value="">اختر الفئة...</option>{articleCats.map(c => <option key={c.value} value={c.value}>{c.icon} {c.label}</option>)}
-                    </select></div>
-                  ) : <div className="form-group"><label>الفئة</label><input type="text" name="category" defaultValue={current?.category || ''} required /></div>}
-                </>)}
-                {tab === 'products' && (<>
-                  <div className="form-group"><label>السعر</label><input type="number" name="price" defaultValue={current?.price || ''} required /></div>
-                  <div className="form-group"><label>المخزون</label><input type="number" name="stock" defaultValue={current?.stock || 0} /></div>
-                  <div className="form-group"><label><input type="checkbox" name="featured" defaultChecked={current?.featured} /> منتج مميز</label></div>
-                </>)}
-                {tab === 'articles' && <div className="form-group"><label><input type="checkbox" name="featured" defaultChecked={current?.featured} /> مقال مميز</label></div>}
-                {tab === 'ads' && (<>
-                  <div className="form-group"><label>الرابط</label><input type="text" name="link" defaultValue={current?.link || ''} /></div>
-                  <div className="form-group"><label>الموقع</label><select name="position" defaultValue={current?.position || 'banner'}>
-                    <option value="hero">Hero</option><option value="sidebar">Sidebar</option><option value="banner">Banner</option><option value="sponsor">Sponsor</option>
-                  </select></div>
-                  <div className="form-group"><label><input type="checkbox" name="active" defaultChecked={current?.active ?? true} /> نشط</label></div>
-                </>)}
-                <div className="form-group">
-                  <label>{tab === 'articles' ? 'صورة المقال الرئيسية' : 'الصورة'}</label>
-                  <input type="file" name="image" accept="image/*" />
-                  {current?.image && <img src={getImageUrl(current.image)} alt="preview" className="preview-image" />}
-                </div>
-                {tab === 'articles' && (<>
-                  <div className="form-group"><label>صور المحتوى</label><input type="file" name="contentImages" accept="image/*" multiple onChange={onContentImgsUpload} /></div>
-                  <ArticleEditor initialBlocks={blocks} onBlocksChange={onBlocksChange} contentImages={contentImgs} />
-                </>)}
-                <div className="modal-actions">
-                  <button type="submit" className="submit-btn"><FaCheck /> {mode === 'create' ? 'إضافة' : 'تحديث'}</button>
-                  <button type="button" className="cancel-btn" onClick={() => setModal(false)}><FaTimes /> إلغاء</button>
-                </div>
-              </form>
+
+                  {/* Article content images and editor */}
+                  {tab === 'articles' && (
+                    <>
+                      <div className="form-group">
+                        <label>صور المحتوى (يمكنك إضافة عدة صور)</label>
+                        <input type="file" name="contentImages" accept="image/*" multiple onChange={onContentImgsUpload} />
+                        {contentImgs.length > 0 && (
+                          <div className="content-images-preview">
+                            {contentImgs.map((img, i) => (
+                              <img key={i} src={img} alt={`content-${i}`} className="preview-thumb" />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <div className="form-group">
+                        <label>محرر المحتوى المتقدم</label>
+                        <ArticleEditor initialBlocks={blocks} onBlocksChange={onBlocksChange} contentImages={contentImgs} />
+                      </div>
+                    </>
+                  )}
+                </form>
+              </div>
+
+              <div className="modal-footer">
+                <button type="submit" form="admin-form" className="submit-btn"><FaCheck /> {mode === 'create' ? 'إضافة' : 'تحديث'}</button>
+                <button type="button" className="cancel-btn" onClick={() => setModal(false)}><FaTimes /> إلغاء</button>
+              </div>
             </motion.div>
           </motion.div>
         )}
