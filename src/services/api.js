@@ -2,31 +2,37 @@ import axios from 'axios';
 import { API_URL } from '../config';
 
 const api = axios.create({ baseURL: API_URL });
-const multipart = { headers: { 'Content-Type': 'multipart/form-data' } };
+
+// Auto-attach JWT token to all requests
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
 // Auth
 export const loginUser = (data) => api.post('/auth/login', data);
 export const registerUser = (data) => api.post('/auth/register', data);
-export const getMe = (token) => api.get('/auth/me', { headers: { Authorization: `Bearer ${token}` } });
+export const getMe = () => api.get('/auth/me');
 
 // Products
 export const getProducts = (params) => api.get('/products', { params });
 export const getProduct = (id) => api.get(`/products/${id}`);
-export const createProduct = (data) => api.post('/products', data, multipart);
-export const updateProduct = (id, data) => api.put(`/products/${id}`, data, multipart);
+export const createProduct = (data) => api.post('/products', data);
+export const updateProduct = (id, data) => api.put(`/products/${id}`, data);
 export const deleteProduct = (id) => api.delete(`/products/${id}`);
 
 // Articles
 export const getArticles = (params) => api.get('/articles', { params });
 export const getArticle = (id) => api.get(`/articles/${id}`);
-export const createArticle = (data) => api.post('/articles', data, multipart);
-export const updateArticle = (id, data) => api.put(`/articles/${id}`, data, multipart);
+export const createArticle = (data) => api.post('/articles', data);
+export const updateArticle = (id, data) => api.put(`/articles/${id}`, data);
 export const deleteArticle = (id) => api.delete(`/articles/${id}`);
 
 // Ads
 export const getAds = (params) => api.get('/ads', { params });
-export const createAd = (data) => api.post('/ads', data, multipart);
-export const updateAd = (id, data) => api.put(`/ads/${id}`, data, multipart);
+export const createAd = (data) => api.post('/ads', data);
+export const updateAd = (id, data) => api.put(`/ads/${id}`, data);
 export const deleteAd = (id) => api.delete(`/ads/${id}`);
 
 // Orders
@@ -38,7 +44,7 @@ export const deleteOrder = (id) => api.delete(`/orders/${id}`);
 
 // Theme
 export const getTheme = () => api.get('/theme');
-export const updateTheme = (data) => api.put('/theme', data, multipart);
+export const updateTheme = (data) => api.put('/theme', data);
 
 // Stats & Categories
 export const getStats = () => api.get('/stats');
