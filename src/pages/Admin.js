@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaBox, FaNewspaper, FaAd, FaShoppingCart, FaPalette, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaChartLine, FaBars } from 'react-icons/fa';
+import { FaBox, FaNewspaper, FaAd, FaShoppingCart, FaPalette, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaChartLine, FaBars, FaComments } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import { getProducts, createProduct, updateProduct, deleteProduct, getArticles, createArticle, updateArticle, deleteArticle, getAds, createAd, updateAd, deleteAd, getOrders, updateOrder, deleteOrder, getTheme, updateTheme, getStats } from '../services/api';
+import { getProducts, createProduct, updateProduct, deleteProduct, getArticles, createArticle, updateArticle, deleteArticle, getAds, createAd, updateAd, deleteAd, getOrders, updateOrder, deleteOrder, getTheme, updateTheme, getStats, getAllComments, deleteComment } from '../services/api';
 import { getImageUrl } from '../config';
 import ArticleEditor from '../components/ArticleEditor';
 import '../styles/Admin.css';
@@ -36,6 +36,7 @@ const Admin = () => {
   const [ads, setAds] = useState([]);
   const [orders, setOrders] = useState([]);
   const [theme, setTheme] = useState({});
+  const [comments, setComments] = useState([]);
   const [modal, setModal] = useState(false);
   const [mode, setMode] = useState('create');
   const [current, setCurrent] = useState(null);
@@ -53,6 +54,7 @@ const Admin = () => {
       else if (tab === 'ads') setAds((await getAds()).data);
       else if (tab === 'orders') setOrders((await getOrders()).data);
       else if (tab === 'theme') setTheme((await getTheme()).data);
+      else if (tab === 'comments') setComments((await getAllComments()).data);
     } catch { toast.error('خطأ في تحميل البيانات'); }
   };
 
@@ -106,6 +108,15 @@ const Admin = () => {
     catch { toast.error('خطأ'); }
   };
 
+  const handleDeleteComment = async (id) => {
+    if (!window.confirm('هل أنت متأكد من حذف هذا التعليق؟')) return;
+    try {
+      await deleteComment(id);
+      toast.success('تم حذف التعليق');
+      loadData();
+    } catch { toast.error('خطأ في حذف التعليق'); }
+  };
+
   const onContentImgsUpload = (e) => {
     if (e.target.files?.length) setContentImgs(p => [...p, ...Array.from(e.target.files).map(f => URL.createObjectURL(f))]);
   };
@@ -135,7 +146,7 @@ const Admin = () => {
       <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header"><h2>لوحة التحكم</h2></div>
         <nav className="sidebar-nav">
-          {[['dashboard', <FaChartLine />, 'الإحصائيات'], ['products', <FaBox />, 'المنتجات'], ['articles', <FaNewspaper />, 'المقالات'], ['ads', <FaAd />, 'الإعلانات'], ['orders', <FaShoppingCart />, 'الطلبات'], ['theme', <FaPalette />, 'المظهر']].map(([k, icon, label]) => (
+          {[['dashboard', <FaChartLine />, 'الإحصائيات'], ['products', <FaBox />, 'المنتجات'], ['articles', <FaNewspaper />, 'المقالات'], ['comments', <FaComments />, 'التعليقات'], ['ads', <FaAd />, 'الإعلانات'], ['orders', <FaShoppingCart />, 'الطلبات'], ['theme', <FaPalette />, 'المظهر']].map(([k, icon, label]) => (
             <button key={k} className={tab === k ? 'active' : ''} onClick={() => handleTabChange(k)}>{icon} <span>{label}</span></button>
           ))}
         </nav>
@@ -246,6 +257,33 @@ const Admin = () => {
                   </tbody>
                 </table>
               </div>
+            </motion.div>
+          )}
+
+          {tab === 'comments' && (
+            <motion.div key="comments" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <h1>إدارة التعليقات ({comments.length})</h1>
+              <div className="table-container">
+                <table className="admin-table">
+                  <thead>
+                    <tr><th>المستخدم</th><th>المقال</th><th>التعليق</th><th>التاريخ</th><th>إجراءات</th></tr>
+                  </thead>
+                  <tbody>
+                    {comments.map(c => (
+                      <tr key={c._id}>
+                        <td data-label="المستخدم">{c.userName}</td>
+                        <td data-label="المقال">{c.article?.titleAr || c.article?.title || 'محذوف'}</td>
+                        <td data-label="التعليق" style={{ maxWidth: '300px', whiteSpace: 'pre-line' }}>{c.content?.length > 100 ? c.content.substring(0, 100) + '...' : c.content}</td>
+                        <td data-label="التاريخ">{new Date(c.createdAt).toLocaleDateString('ar-DZ')}</td>
+                        <td data-label="إجراءات">
+                          <button className="delete-btn" onClick={() => handleDeleteComment(c._id)}><FaTrash /></button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {comments.length === 0 && <p style={{ textAlign: 'center', color: '#a0aec0', marginTop: '30px' }}>لا توجد تعليقات بعد</p>}
             </motion.div>
           )}
 
