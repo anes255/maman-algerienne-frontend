@@ -53,7 +53,7 @@ const ProductDetail = () => {
                 {product.stock > 0 ? <><FaCheck className="icon success" /><span className="in-stock">متوفر ({product.stock})</span></> : <><FaTimes className="icon error" /><span className="out-of-stock">غير متوفر</span></>}
               </div>
             </div>
-            <div className="product-description"><h3>وصف المنتج</h3><p>{product.descriptionAr || product.description}</p></div>
+            <div className="product-description"><h3>وصف المنتج</h3><p style={{ whiteSpace: 'pre-line' }}>{product.descriptionAr || product.description}</p></div>
             <motion.button className="add-to-cart-button" onClick={() => { addToCart(product); toast.success('تمت الإضافة!'); }} disabled={product.stock === 0} whileHover={{ scale: product.stock > 0 ? 1.05 : 1 }}>
               <FaShoppingCart /><span>{product.stock > 0 ? 'أضف إلى السلة' : 'غير متوفر'}</span>
             </motion.button>
