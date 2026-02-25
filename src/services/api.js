@@ -51,4 +51,10 @@ export const getStats = () => api.get('/stats');
 export const getCategories = () => api.get('/categories');
 export const trackVisit = () => api.post('/track-visit');
 
+// Comments
+export const getComments = (articleId) => api.get(`/comments/${articleId}`);
+export const getAllComments = () => api.get('/comments');
+export const addComment = (data) => api.post('/comments', data);
+export const deleteComment = (id) => api.delete(`/comments/${id}`);
+
 export default api;
