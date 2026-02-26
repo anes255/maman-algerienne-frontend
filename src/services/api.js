@@ -10,24 +10,61 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// ─── Data Cache & Preloader ───
+var dataCache = {};
+var cacheExpiry = {};
+var CACHE_TTL = 2 * 60 * 1000; // 2 minutes
+
+var cachedGet = function(key, fetcher) {
+  var now = Date.now();
+  if (dataCache[key] && cacheExpiry[key] && now < cacheExpiry[key]) {
+    return Promise.resolve({ data: dataCache[key] });
+  }
+  return fetcher().then(function(res) {
+    dataCache[key] = res.data;
+    cacheExpiry[key] = now + CACHE_TTL;
+    return res;
+  });
+};
+
+// Preload main data on app start
+export var preloadData = function() {
+  cachedGet('products', function() { return api.get('/products'); }).catch(function() {});
+  cachedGet('articles', function() { return api.get('/articles'); }).catch(function() {});
+  cachedGet('theme', function() { return api.get('/theme'); }).catch(function() {});
+};
+
+// Keep backend alive (Render free tier sleeps after 15min)
+export var startKeepAlive = function() {
+  setInterval(function() {
+    api.get('/theme').catch(function() {});
+  }, 14 * 60 * 1000); // every 14 minutes
+};
+
 // Auth
 export const loginUser = (data) => api.post('/auth/login', data);
 export const registerUser = (data) => api.post('/auth/register', data);
 export const getMe = () => api.get('/auth/me');
 
-// Products
-export const getProducts = (params) => api.get('/products', { params });
+// Products (cached)
+export var getProducts = function(params) {
+  if (params && Object.keys(params).length > 0) return api.get('/products', { params: params });
+  return cachedGet('products', function() { return api.get('/products'); });
+};
 export const getProduct = (id) => api.get(`/products/${id}`);
 export const createProduct = (data) => api.post('/products', data);
 export const updateProduct = (id, data) => api.put(`/products/${id}`, data);
-export const deleteProduct = (id) => api.delete(`/products/${id}`);
+export var deleteProduct = function(id) { delete dataCache['products']; return api.delete('/products/' + id); };
 
-// Articles
-export const getArticles = (params) => api.get('/articles', { params });
+// Articles (cached)
+export var getArticles = function(params) {
+  if (params && Object.keys(params).length > 0) return api.get('/articles', { params: params });
+  return cachedGet('articles', function() { return api.get('/articles'); });
+};
 export const getArticle = (id) => api.get(`/articles/${id}`);
 export const createArticle = (data) => api.post('/articles', data);
 export const updateArticle = (id, data) => api.put(`/articles/${id}`, data);
-export const deleteArticle = (id) => api.delete(`/articles/${id}`);
+export var deleteArticle = function(id) { delete dataCache['articles']; return api.delete('/articles/' + id); };
 
 // Ads
 export const getAds = (params) => api.get('/ads', { params });
@@ -48,7 +85,9 @@ export const updateTheme = (data) => api.put('/theme', data);
 
 // Stats & Categories
 export const getStats = () => api.get('/stats');
-export const getCategories = () => api.get('/categories');
+export var getCategories = function() {
+  return cachedGet('categories', function() { return api.get('/categories'); });
+};
 export const trackVisit = () => api.post('/track-visit');
 
 // Comments
