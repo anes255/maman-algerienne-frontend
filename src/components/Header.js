@@ -1,111 +1,332 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { FaShoppingCart, FaBars, FaTimes, FaSearch, FaUser, FaSignOutAlt, FaSignInAlt } from 'react-icons/fa';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
-import { API_BASE_URL } from '../config';
-import '../styles/Header.css';
+.header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  background: white;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-const Header = () => {
-  const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
-  const [lastY, setLastY] = useState(0);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [search, setSearch] = useState('');
-  const [userMenu, setUserMenu] = useState(false);
-  const { getCartCount } = useCart();
-  const { user, isAuthenticated, logout } = useAuth();
-  const { theme } = useTheme();
-  const nav = useNavigate();
+.header.scrolled {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
 
-  useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 50);
-      if (window.innerWidth <= 768) {
-        setHidden(y > lastY && y > 100);
-      } else {
-        setHidden(false);
-      }
-      setLastY(y);
-    };
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [lastY]);
+.header.hidden {
+  transform: translateY(-100%);
+  pointer-events: none;
+}
 
-  const doSearch = (e) => {
-    e.preventDefault();
-    if (search.trim()) { nav(`/search?q=${search}`); setSearch(''); }
-  };
+@media (max-width: 768px) {
+  .header {
+    transition: transform 0.3s ease;
+  }
+}
 
-  const doLogout = () => { logout(); setUserMenu(false); nav('/'); };
+.header-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
 
-  const links = [
-    { name: 'الرئيسية', path: '/' },
-    { name: 'المنتجات', path: '/products' },
-    { name: 'المقالات', path: '/articles' },
-  ];
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  transition: var(--transition);
+}
 
-  return (
-    <header className={`header ${scrolled ? 'scrolled' : ''} ${hidden ? 'hidden' : ''}`}>
-      <div className="header-container">
-        <Link to="/" className="logo">
-          {theme.logoImage ? (
-            <img src={`${API_BASE_URL}${theme.logoImage}`} alt={theme.logoText} />
-          ) : (
-            <h1>{theme.logoText}</h1>
-          )}
-        </Link>
+.logo:hover {
+  transform: scale(1.05);
+}
 
-        <nav className={`nav-menu ${menuOpen ? 'active' : ''}`}>
-          {links.map((l, i) => (
-            <motion.div key={l.path} initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-              <Link to={l.path} className="nav-link" onClick={() => setMenuOpen(false)}>{l.name}</Link>
-            </motion.div>
-          ))}
-        </nav>
+.logo img {
+  height: 50px;
+  object-fit: contain;
+}
 
-        <div className="header-actions">
-          <form onSubmit={doSearch} className="search-form">
-            <input type="text" placeholder="ابحث..." value={search} onChange={e => setSearch(e.target.value)} />
-            <button type="submit"><FaSearch /></button>
-          </form>
+.nav-menu {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
 
-          <Link to="/cart" className="cart-icon">
-            <FaShoppingCart />
-            {getCartCount() > 0 && (
-              <motion.span className="cart-badge" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 500 }}>
-                {getCartCount()}
-              </motion.span>
-            )}
-          </Link>
+.nav-link {
+  position: relative;
+  padding: 10px 0;
+  font-weight: 600;
+  color: var(--text-color);
+  transition: var(--transition);
+}
 
-          {isAuthenticated ? (
-            <div className="user-menu">
-              <button className="user-btn" onClick={() => setUserMenu(!userMenu)}>
-                <FaUser /><span>{user?.fullName?.split(' ')[0]}</span>
-              </button>
-              {userMenu && (
-                <motion.div className="user-dropdown" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-                  <p className="user-email">{user?.phoneNumber}</p>
-                  {user?.isAdmin && <Link to="/admin" onClick={() => setUserMenu(false)}>لوحة التحكم</Link>}
-                  <button onClick={doLogout}><FaSignOutAlt /> تسجيل الخروج</button>
-                </motion.div>
-              )}
-            </div>
-          ) : (
-            <Link to="/login" className="login-btn"><FaSignInAlt /><span>دخول</span></Link>
-          )}
+.nav-link .en {
+  display: none;
+}
 
-          <button className="mobile-menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
-            {menuOpen ? <FaTimes /> : <FaBars />}
-          </button>
-        </div>
-      </div>
-    </header>
-  );
-};
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary-color);
+  transition: width 0.3s ease;
+}
 
-export default Header;
+.nav-link:hover {
+  color: var(--primary-color);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+  background: var(--background-color);
+  border-radius: 25px;
+  padding: 8px 15px;
+  transition: var(--transition);
+}
+
+.search-form:focus-within {
+  box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.2);
+}
+
+.search-form input {
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 5px 10px;
+  width: 200px;
+  transition: var(--transition);
+}
+
+.search-form button {
+  background: var(--primary-color);
+  color: white;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.search-form button:hover {
+  background: var(--accent-color);
+  transform: scale(1.1);
+}
+
+.cart-icon {
+  position: relative;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  transition: var(--transition);
+}
+
+.cart-icon:hover {
+  transform: scale(1.1);
+  color: var(--accent-color);
+}
+
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  background: var(--primary-color);
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.mobile-menu-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  cursor: pointer;
+  padding: 8px;
+}
+
+.user-menu {
+  position: relative;
+}
+
+.user-btn,
+.login-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--primary-color);
+  color: white;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.user-btn:hover,
+.login-btn:hover {
+  background: var(--accent-color);
+  transform: scale(1.05);
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  min-width: 200px;
+  padding: 10px;
+  z-index: 1000;
+}
+
+.user-email {
+  padding: 10px 15px;
+  font-size: 0.85rem;
+  color: #666;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 5px;
+}
+
+.user-dropdown a,
+.user-dropdown button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 15px;
+  background: transparent;
+  color: var(--text-color);
+  border-radius: 8px;
+  transition: var(--transition);
+  text-align: right;
+}
+
+.user-dropdown a:hover,
+.user-dropdown button:hover {
+  background: var(--background-color);
+  color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    padding: 10px 15px;
+    gap: 8px;
+  }
+
+  .logo {
+    font-size: 1rem;
+  }
+
+  .logo img {
+    height: 35px;
+  }
+
+  .logo h1 {
+    font-size: 1rem;
+  }
+
+  .nav-menu {
+    position: fixed;
+    top: 60px;
+    right: -100%;
+    width: 70%;
+    height: calc(100vh - 60px);
+    background: white;
+    flex-direction: column;
+    padding: 30px;
+    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    align-items: flex-start;
+    z-index: 999;
+  }
+
+  .nav-menu.active {
+    right: 0;
+  }
+
+  .nav-link {
+    width: 100%;
+    padding: 15px 0;
+    font-size: 1.1rem;
+  }
+
+  .header-actions {
+    gap: 5px;
+  }
+
+  .search-form {
+    display: none;
+  }
+
+  .cart-icon {
+    font-size: 1.2rem;
+    padding: 6px;
+  }
+
+  .cart-badge {
+    width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
+    top: -6px;
+    left: -6px;
+  }
+
+  .user-btn,
+  .login-btn {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+
+  .user-btn span,
+  .login-btn span {
+    display: none;
+  }
+
+  .mobile-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    padding: 6px;
+  }
+
+  .user-dropdown {
+    left: auto;
+    right: 0;
+    min-width: 180px;
+    position: fixed;
+    top: 60px;
+    right: 10px;
+    left: auto;
+    max-width: calc(100vw - 20px);
+  }
+}
