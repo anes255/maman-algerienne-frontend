@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { trackVisit } from './services/api';
+import { trackVisit, preloadData, startKeepAlive } from './services/api';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -32,7 +32,7 @@ const AdminRoute = ({ children }) => {
 };
 
 function App() {
-  useEffect(() => { trackVisit().catch(() => {}); }, []);
+  useEffect(() => { trackVisit().catch(() => {}); preloadData(); startKeepAlive(); }, []);
   return (
     <ThemeProvider>
       <AuthProvider>
