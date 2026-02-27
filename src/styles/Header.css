@@ -322,5 +322,11 @@
   .user-dropdown {
     left: auto;
     right: 0;
+    min-width: 180px;
+    position: fixed;
+    top: 60px;
+    right: 10px;
+    left: auto;
+    max-width: calc(100vw - 20px);
   }
 }
