@@ -47,12 +47,12 @@ var ArticleDetail = function() {
   };
 
   var handleShare = function() {
-    var url = window.location.href;
+    var shareUrl = API_BASE_URL + '/share/article/' + id;
     var title = article ? (article.titleAr || article.title) : '';
     if (navigator.share) {
-      navigator.share({ title: title, url: url }).catch(function() {});
+      navigator.share({ title: title, url: shareUrl }).catch(function() {});
     } else {
-      navigator.clipboard.writeText(url).then(function() {
+      navigator.clipboard.writeText(shareUrl).then(function() {
         toast.success('تم نسخ الرابط');
       }).catch(function() {
         toast.error('فشل نسخ الرابط');
