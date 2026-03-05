@@ -36,10 +36,10 @@ const Home = () => {
         getAds({ position: 'hero', active: true }),
         getAds({ position: 'sponsor', active: true })
       ]);
-      setFeaturedProducts(productsRes.data.slice(0, 8));
-      setFeaturedArticles(articlesRes.data.slice(0, 6));
-      setHeroAds(heroAdsRes.data);
-      setSponsorAds(sponsorAdsRes.data);
+      setFeaturedProducts(Array.isArray(productsRes.data) ? productsRes.data.slice(0, 8) : []);
+      setFeaturedArticles(Array.isArray(articlesRes.data) ? articlesRes.data.slice(0, 6) : []);
+      setHeroAds(Array.isArray(heroAdsRes.data) ? heroAdsRes.data : []);
+      setSponsorAds(Array.isArray(sponsorAdsRes.data) ? sponsorAdsRes.data : []);
     } catch (error) {
       console.error('Error loading data:', error);
     }
