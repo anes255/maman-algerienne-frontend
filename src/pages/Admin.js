@@ -695,7 +695,9 @@ const Admin = () => {
                   )
                 }
               >
-                {/* Common fields */}
+                {/* Common fields - NOT for links */}
+                {activeTab !== 'links' && (
+                <>
                 <div className="form-group">
                   <label>الاسم/العنوان</label>
                   <input
@@ -910,35 +912,39 @@ const Admin = () => {
                     contentImages={uploadedContentImages}
                   />
                 )}
+                </>
+                )}
 
                 {activeTab === 'links' && (
                   <>
                     <div className="form-group">
+                      <label>العنوان</label>
+                      <input type="text" name="title" defaultValue={currentItem ? currentItem.title : ''} required placeholder="عنوان الملف..." />
+                    </div>
+                    <div className="form-group">
+                      <label>العنوان بالعربية</label>
+                      <input type="text" name="titleAr" defaultValue={currentItem ? currentItem.titleAr : ''} placeholder="عنوان الملف بالعربية..." />
+                    </div>
+                    <div className="form-group">
                       <label>الوصف</label>
-                      <textarea
-                        name="description"
-                        defaultValue={currentItem ? currentItem.description : ''}
-                        required
-                        rows="3"
-                        placeholder="وصف الملف..."
-                      />
+                      <textarea name="description" defaultValue={currentItem ? currentItem.description : ''} required rows="3" placeholder="وصف الملف..." />
                     </div>
                     <div className="form-group">
                       <label>الوصف بالعربية</label>
-                      <textarea
-                        name="descriptionAr"
-                        defaultValue={currentItem ? currentItem.descriptionAr : ''}
-                        rows="3"
-                        placeholder="وصف الملف بالعربية..."
-                      />
+                      <textarea name="descriptionAr" defaultValue={currentItem ? currentItem.descriptionAr : ''} rows="3" placeholder="وصف الملف بالعربية..." />
+                    </div>
+                    <div className="form-group">
+                      <label>صورة الغلاف</label>
+                      <input type="file" name="image" accept="image/*" />
+                      {currentItem && currentItem.image && (
+                        <img src={`${API_BASE_URL}${currentItem.image}`} alt="Current" className="preview-image" />
+                      )}
                     </div>
                     <div className="form-group">
                       <label>الملف للتحميل (PDF, ZIP, DOC, إلخ)</label>
                       <input type="file" name="file" required={modalMode === 'create'} />
                       {currentItem && currentItem.fileName && (
-                        <small style={{ color: '#666', marginTop: '5px', display: 'block' }}>
-                          الملف الحالي: {currentItem.fileName}
-                        </small>
+                        <small style={{ color: '#666', marginTop: '5px', display: 'block' }}>الملف الحالي: {currentItem.fileName}</small>
                       )}
                     </div>
                     <div className="form-group">
