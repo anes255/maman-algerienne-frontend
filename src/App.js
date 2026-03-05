@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -6,7 +6,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { trackVisit, preloadData, startKeepAlive } from './services/api';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -21,18 +20,28 @@ import Cart from './pages/Cart';
 import Admin from './pages/Admin';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Links from './pages/Links';
 
 import './styles/App.css';
 
-const AdminRoute = ({ children }) => {
+// Protected Route for Admin
+const ProtectedAdminRoute = ({ children }) => {
   const { user, loading, isAdmin } = useAuth();
-  if (loading) return <div className="loading">جاري التحميل...</div>;
-  if (!user || !isAdmin) return <Navigate to="/login" replace />;
+
+  if (loading) {
+    return <div className="loading">جاري التحميل...</div>;
+  }
+
+  if (!user || !isAdmin) {
+    console.log('❌ Admin access denied:', { user: !!user, isAdmin });
+    return <Navigate to="/login" replace />;
+  }
+
+  console.log('✅ Admin access granted');
   return children;
 };
 
 function App() {
-  useEffect(() => { trackVisit().catch(() => {}); preloadData(); startKeepAlive(); }, []);
   return (
     <ThemeProvider>
       <AuthProvider>
@@ -49,13 +58,31 @@ function App() {
                   <Route path="/articles" element={<Articles />} />
                   <Route path="/articles/:id" element={<ArticleDetail />} />
                   <Route path="/cart" element={<Cart />} />
+                  <Route path="/links" element={<Links />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
-                  <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+                  <Route 
+                    path="/admin" 
+                    element={
+                      <ProtectedAdminRoute>
+                        <Admin />
+                      </ProtectedAdminRoute>
+                    } 
+                  />
                 </Routes>
               </main>
               <Footer />
-              <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick rtl pauseOnFocusLoss draggable pauseOnHover />
+              <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                rtl
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+              />
             </div>
           </Router>
         </CartProvider>
