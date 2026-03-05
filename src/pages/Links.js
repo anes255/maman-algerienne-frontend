@@ -30,27 +30,8 @@ var Links = function() {
     });
   }, []);
 
-  var handleDownload = async function(link) {
-    try {
-      var res = await fetch(API_BASE_URL + '/api/links/' + link._id + '/download');
-      var data = await res.json();
-      if (data.url) {
-        var a = document.createElement('a');
-        a.href = data.url;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }
-    } catch (err) {
-      // Fallback: open Cloudinary URL directly
-      if (link.fileUrl) {
-        window.open(link.fileUrl, '_blank');
-      } else {
-        toast.error('خطأ في التحميل');
-      }
-    }
+  var handleDownload = function(link) {
+    window.open(API_BASE_URL + '/api/links/' + link._id + '/download', '_blank');
   };
 
   if (loading) {
