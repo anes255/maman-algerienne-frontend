@@ -76,4 +76,10 @@ export const updateLink = (id, data) => api.put('/links/' + id, data, {
 });
 export const deleteLink = (id) => api.delete('/links/' + id);
 
+// Comments
+export const getComments = (articleId) => api.get('/comments/' + articleId);
+export const getAllComments = () => api.get('/comments');
+export const addComment = (data) => api.post('/comments', data);
+export const deleteComment = (id) => api.delete('/comments/' + id);
+
 export default api;
