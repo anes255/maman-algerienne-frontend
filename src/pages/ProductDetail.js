@@ -169,12 +169,12 @@ const ProductDetail = () => {
                 <span>{product.stock > 0 ? 'أضف إلى السلة' : 'غير متوفر'}</span>
               </motion.button>
               <button className="share-btn" onClick={function() {
-                var url = window.location.href;
+                var shareUrl = API_BASE_URL + '/share/product/' + id;
                 var title = product.nameAr || product.name;
                 if (navigator.share) {
-                  navigator.share({ title: title, url: url }).catch(function() {});
+                  navigator.share({ title: title, url: shareUrl }).catch(function() {});
                 } else {
-                  navigator.clipboard.writeText(url).then(function() { toast.success('تم نسخ الرابط'); }).catch(function() {});
+                  navigator.clipboard.writeText(shareUrl).then(function() { toast.success('تم نسخ الرابط'); }).catch(function() {});
                 }
               }} title="مشاركة المنتج">
                 <FaShareAlt /> مشاركة
