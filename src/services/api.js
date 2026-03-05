@@ -5,6 +5,15 @@ const api = axios.create({
   baseURL: API_URL,
 });
 
+// Auto-attach JWT token to all requests
+api.interceptors.request.use(function(config) {
+  var token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = 'Bearer ' + token;
+  }
+  return config;
+});
+
 // Products
 export const getProducts = (params) => api.get('/products', { params });
 export const getProduct = (id) => api.get(`/products/${id}`);
