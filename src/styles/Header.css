@@ -285,11 +285,12 @@
 
   .search-form {
     display: flex;
+    flex-direction: row-reverse;
     max-width: 150px;
   }
 
   .search-form input {
-    font-size: 0.8rem;
+    font-size: 16px;
     padding: 6px 10px;
     width: 110px;
   }
