@@ -618,35 +618,56 @@ const Admin = () => {
             >
               <div className="section-header">
                 <h1>إدارة التحميلات</h1>
-                <button className="add-btn" onClick={() => { setModalMode('create'); setCurrentItem(null); setShowModal(true); setActiveTab('links'); }}>
+                <button className="add-btn" onClick={() => { setModalMode('create'); setCurrentItem(null); setShowModal(true); }}>
                   <FaPlus /> إضافة ملف
                 </button>
               </div>
-              <div className="data-grid">
-                {links.map(link => (
-                  <div key={link._id} className="data-card">
-                    {link.image && <img src={`${API_BASE_URL}${link.image}`} alt={link.title} className="card-image" />}
-                    <div className="card-content">
-                      <h3>{link.titleAr || link.title}</h3>
-                      <p>{link.descriptionAr || link.description}</p>
-                      <div className="card-meta">
-                        <span>📁 {link.fileName}</span>
-                        <span>⬇️ {link.downloads || 0} تحميل</span>
-                        <span className={link.active ? 'status-active' : 'status-inactive'}>
-                          {link.active ? 'مفعل' : 'معطل'}
-                        </span>
-                      </div>
-                      <div className="card-actions">
-                        <button className="edit-btn" onClick={() => { setModalMode('edit'); setCurrentItem(link); setShowModal(true); }}>
-                          <FaEdit /> تعديل
-                        </button>
-                        <button className="delete-btn" onClick={async () => { if (window.confirm('حذف هذا الملف؟')) { await deleteLink(link._id); loadData(); toast.success('تم الحذف'); } }}>
-                          <FaTrash /> حذف
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+              <div className="table-responsive">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>الصورة</th>
+                      <th>العنوان</th>
+                      <th>الملف</th>
+                      <th>التحميلات</th>
+                      <th>الحالة</th>
+                      <th>إجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {links.map(link => (
+                      <tr key={link._id}>
+                        <td>
+                          {link.image && (
+                            <img src={`${API_BASE_URL}${link.image}`} alt={link.title} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px' }} />
+                          )}
+                        </td>
+                        <td>
+                          <strong>{link.titleAr || link.title}</strong>
+                          <br />
+                          <small style={{ color: '#666' }}>{(link.descriptionAr || link.description || '').substring(0, 50)}</small>
+                        </td>
+                        <td>{link.fileName || '-'}</td>
+                        <td>{link.downloads || 0}</td>
+                        <td>
+                          <span className={`status-badge ${link.active ? 'active' : 'inactive'}`}>
+                            {link.active ? 'مفعل' : 'معطل'}
+                          </span>
+                        </td>
+                        <td>
+                          <div className="action-buttons">
+                            <button className="edit-btn" onClick={() => { setModalMode('edit'); setCurrentItem(link); setShowModal(true); }}>
+                              <FaEdit />
+                            </button>
+                            <button className="delete-btn" onClick={async () => { if (window.confirm('حذف هذا الملف؟')) { await deleteLink(link._id); loadData(); toast.success('تم الحذف'); } }}>
+                              <FaTrash />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
               {links.length === 0 && <p style={{ textAlign: 'center', color: '#999', marginTop: '40px' }}>لا توجد تحميلات بعد</p>}
             </motion.div>
