@@ -27,11 +27,11 @@
 .header-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 15px 30px;
+  padding: 10px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 30px;
+  gap: 20px;
 }
 
 .logo {
@@ -48,13 +48,13 @@
 }
 
 .logo img {
-  height: 50px;
+  height: 40px;
   object-fit: contain;
 }
 
 .nav-menu {
   display: flex;
-  gap: 30px;
+  gap: 20px;
   align-items: center;
 }
 
@@ -284,7 +284,19 @@
   }
 
   .search-form {
-    display: none;
+    display: flex;
+    max-width: 150px;
+  }
+
+  .search-form input {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    width: 110px;
+  }
+
+  .search-form button {
+    padding: 6px 10px;
+    font-size: 0.9rem;
   }
 
   .cart-icon {
@@ -317,16 +329,5 @@
     justify-content: center;
     font-size: 1.3rem;
     padding: 6px;
-  }
-
-  .user-dropdown {
-    left: auto;
-    right: 0;
-    min-width: 180px;
-    position: fixed;
-    top: 60px;
-    right: 10px;
-    left: auto;
-    max-width: calc(100vw - 20px);
   }
 }
