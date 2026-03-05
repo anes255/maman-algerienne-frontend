@@ -3,8 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
-import { FaArrowRight, FaCalendar, FaEye, FaUser, FaShareAlt } from 'react-icons/fa';
-import { getArticle } from '../services/api';
+import { FaArrowRight, FaCalendar, FaEye, FaUser, FaShareAlt, FaComments, FaPaperPlane, FaTrash } from 'react-icons/fa';
+import { getArticle, getComments, addComment, deleteComment } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import '../styles/ArticleDetail.css';
 
@@ -16,11 +17,53 @@ var ArticleDetail = function() {
   var article = _s1[0], setArticle = _s1[1];
   var _s2 = useState(true);
   var loading = _s2[0], setLoading = _s2[1];
+  var _s3 = useState([]);
+  var comments = _s3[0], setComments = _s3[1];
+  var _s4 = useState('');
+  var commentText = _s4[0], setCommentText = _s4[1];
+  var _s5 = useState(false);
+  var submitting = _s5[0], setSubmitting = _s5[1];
+  var auth = useAuth();
+  var user = auth.user;
+  var isAuthenticated = auth.isAuthenticated;
+  var isAdmin = auth.isAdmin;
+
+  var loadComments = function() {
+    getComments(id).then(function(r) { setComments(Array.isArray(r.data) ? r.data : []); }).catch(function() {});
+  };
+
+  var handleAddComment = async function(e) {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+    setSubmitting(true);
+    try {
+      await addComment({ articleId: id, content: commentText.trim() });
+      setCommentText('');
+      loadComments();
+      toast.success('تم إضافة التعليق');
+    } catch (err) {
+      toast.error('خطأ في إضافة التعليق');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  var handleDeleteComment = async function(commentId) {
+    if (!window.confirm('هل أنت متأكد من حذف هذا التعليق؟')) return;
+    try {
+      await deleteComment(commentId);
+      loadComments();
+      toast.success('تم حذف التعليق');
+    } catch (err) {
+      toast.error('خطأ في حذف التعليق');
+    }
+  };
 
   useEffect(function() {
     setLoading(true);
     getArticle(id).then(function(r) { setArticle(r.data); }).catch(function() { toast.error('خطأ في تحميل المقال'); }).finally(function() { setLoading(false); });
-  }, [id]);
+    loadComments();
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   var formatDate = function(d) {
     return new Date(d).toLocaleDateString('ar-DZ', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -187,6 +230,44 @@ var ArticleDetail = function() {
                 })
               )
             )
+        ),
+        // Comments Section
+        React.createElement('div', { className: 'comments-section' },
+          React.createElement('h3', { className: 'comments-title' }, React.createElement(FaComments, null), ' التعليقات (' + comments.length + ')'),
+          isAuthenticated
+            ? React.createElement('form', { className: 'comment-form', onSubmit: handleAddComment },
+                React.createElement('div', { className: 'comment-input-wrapper' },
+                  React.createElement('div', { className: 'comment-avatar' }, user && user.fullName ? user.fullName.charAt(0) : '؟'),
+                  React.createElement('textarea', { value: commentText, onChange: function(e) { setCommentText(e.target.value); }, placeholder: 'اكتب تعليقك هنا...', rows: '3', required: true })
+                ),
+                React.createElement('button', { type: 'submit', className: 'comment-submit-btn', disabled: submitting || !commentText.trim() },
+                  React.createElement(FaPaperPlane, null), submitting ? ' جاري الإرسال...' : ' أضف تعليق'
+                )
+              )
+            : React.createElement('div', { className: 'comment-login-prompt' },
+                React.createElement('p', null, 'قم ', React.createElement('span', { className: 'login-link', onClick: function() { navigate('/login'); } }, 'بتسجيل الدخول'), ' لإضافة تعليق')
+              ),
+          React.createElement('div', { className: 'comments-list' },
+            comments.length === 0
+              ? React.createElement('p', { className: 'no-comments' }, 'لا توجد تعليقات بعد. كن أول من يعلق!')
+              : comments.map(function(c) {
+                  return React.createElement(motion.div, { key: c._id, className: 'comment-card', initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 } },
+                    React.createElement('div', { className: 'comment-header' },
+                      React.createElement('div', { className: 'comment-user-info' },
+                        React.createElement('div', { className: 'comment-avatar-small' }, c.userName ? c.userName.charAt(0) : '؟'),
+                        React.createElement('div', null,
+                          React.createElement('span', { className: 'comment-author' }, c.userName),
+                          React.createElement('span', { className: 'comment-date' }, new Date(c.createdAt).toLocaleDateString('ar-DZ', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }))
+                        )
+                      ),
+                      (isAdmin || (user && c.user === user._id))
+                        ? React.createElement('button', { className: 'comment-delete-btn', onClick: function() { handleDeleteComment(c._id); }, title: 'حذف التعليق' }, React.createElement(FaTrash, null))
+                        : null
+                    ),
+                    React.createElement('p', { className: 'comment-content', style: { whiteSpace: 'pre-line' } }, c.content)
+                  );
+                })
+          )
         ),
         React.createElement('div', { className: 'article-footer' },
           React.createElement(motion.button, { className: 'back-to-articles-btn', onClick: function() { navigate('/articles'); }, whileHover: { scale: 1.05 } },
