@@ -129,20 +129,20 @@ var ArticleDetail = function() {
     return sorted.map(function(block, idx) {
       var key = block.id || idx;
       var settings = block.settings || {};
-      var align = settings.alignment || settings.align || 'right';
+      var align = settings.align || 'right';
       var size = settings.size || settings.imageSize || settings.videoSize || 'large';
 
       if (block.type === 'heading') {
-        var tag = settings.headingSize || settings.size || 'h2';
+        var tag = settings.size || settings.headingSize || 'h2';
         if (['h1','h2','h3','h4'].indexOf(tag) === -1) tag = 'h2';
         return React.createElement(motion.div, { key: key, className: 'content-block block-heading', initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true } },
-          React.createElement(tag, { style: { textAlign: align } }, block.content)
+          React.createElement(tag, { style: { textAlign: align, direction: 'rtl' } }, block.content)
         );
       }
 
       if (block.type === 'paragraph') {
         return React.createElement(motion.div, { key: key, className: 'content-block block-paragraph', initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true } },
-          React.createElement('div', { style: { textAlign: align, whiteSpace: 'pre-line' } }, block.content)
+          React.createElement('div', { style: { textAlign: align, whiteSpace: 'pre-line', direction: 'rtl' } }, block.content)
         );
       }
 
@@ -227,7 +227,7 @@ var ArticleDetail = function() {
         React.createElement('div', { className: 'article-content' },
           article.contentBlocks && article.contentBlocks.length > 0
             ? React.createElement('div', { className: 'flexible-content' }, renderBlocks())
-            : React.createElement('div', { className: 'content-text', style: { whiteSpace: 'pre-line' } }, content),
+            : React.createElement('div', { className: 'content-text', style: { whiteSpace: 'pre-line', direction: 'rtl' } }, content),
           article.contentImages && article.contentImages.length > 0 && (!article.contentBlocks || article.contentBlocks.length === 0) &&
             React.createElement('div', { className: 'content-images' },
               React.createElement('h3', null, 'صور إضافية'),
