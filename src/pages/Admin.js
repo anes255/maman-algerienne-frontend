@@ -931,6 +931,7 @@ const Admin = () => {
                     initialBlocks={contentBlocks}
                     onBlocksChange={handleBlocksChange}
                     contentImages={uploadedContentImages}
+                    articles={articles}
                   />
                 )}
                 </>
