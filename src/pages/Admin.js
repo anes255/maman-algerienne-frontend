@@ -142,7 +142,16 @@ const Admin = () => {
 
     // Add content blocks for articles
     if (type === 'article' && contentBlocks.length > 0) {
-      formData.append('contentBlocks', JSON.stringify(contentBlocks));
+      // Replace blob URLs with index markers so server can map them to Cloudinary URLs
+      const blobUrls = uploadedContentImages.filter(u => u.startsWith('blob:'));
+      const processedBlocks = contentBlocks.map(block => {
+        if (block.type === 'image' && block.imageUrl && block.imageUrl.startsWith('blob:')) {
+          const blobIdx = blobUrls.indexOf(block.imageUrl);
+          return { ...block, _blobIdx: blobIdx };
+        }
+        return block;
+      });
+      formData.append('contentBlocks', JSON.stringify(processedBlocks));
     }
 
     try {
