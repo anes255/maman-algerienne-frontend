@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaPlus, FaTrash, FaArrowUp, FaArrowDown, FaHeading, FaParagraph, FaImage, FaAlignLeft, FaAlignCenter, FaAlignRight, FaVideo } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaArrowUp, FaArrowDown, FaHeading, FaParagraph, FaImage, FaAlignLeft, FaAlignCenter, FaAlignRight, FaVideo, FaLink } from 'react-icons/fa';
 import { getImageUrl } from '../config';
 import '../styles/ArticleEditor.css';
 
-const ArticleEditor = ({ initialBlocks = [], onBlocksChange, contentImages = [] }) => {
+const ArticleEditor = ({ initialBlocks = [], onBlocksChange, contentImages = [], articles = [] }) => {
   const [blocks, setBlocks] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
   const init = useRef(false);
@@ -28,6 +28,7 @@ const ArticleEditor = ({ initialBlocks = [], onBlocksChange, contentImages = [] 
     setBlocks(p => [...p, {
       id: `b-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
       type, content: '', imageUrl: '', videoUrl: '', caption: '',
+      linkArticleId: '', linkText: '',
       settings: { size: type === 'heading' ? 'h2' : type === 'video' ? 'large' : 'medium', align: 'right' }
     }]);
     setShowMenu(false);
@@ -70,6 +71,7 @@ const ArticleEditor = ({ initialBlocks = [], onBlocksChange, contentImages = [] 
       <span className="block-type-badge">
         {block.type === 'heading' && '📝 عنوان'}{block.type === 'paragraph' && '📄 فقرة'}
         {block.type === 'image' && '🖼️ صورة'}{block.type === 'video' && '🎥 فيديو'}
+        {block.type === 'article-link' && '🔗 رابط مقال'}
       </span>
       <div className="block-actions">
         <button type="button" onClick={() => move(index, -1)} disabled={index === 0} className="btn-icon"><FaArrowUp /></button>
@@ -98,13 +100,13 @@ const ArticleEditor = ({ initialBlocks = [], onBlocksChange, contentImages = [] 
                       </select>
                       <label>المحاذاة:</label><AlignBtns block={block} />
                     </div>
-                    <input type="text" className={`heading-input ${block.settings.size}`} style={{ textAlign: block.settings.align }} placeholder="اكتب العنوان هنا..." value={block.content} onChange={e => upd(block.id, 'content', e.target.value)} />
+                    <input type="text" className={`heading-input ${block.settings.size}`} style={{ textAlign: block.settings.align, direction: 'rtl' }} placeholder="اكتب العنوان هنا..." value={block.content} onChange={e => upd(block.id, 'content', e.target.value)} />
                   </>
                 )}
                 {block.type === 'paragraph' && (
                   <>
                     <div className="block-settings"><label>المحاذاة:</label><AlignBtns block={block} /></div>
-                    <textarea className="paragraph-input" style={{ textAlign: block.settings.align }} placeholder="اكتب النص هنا..." value={block.content} onChange={e => upd(block.id, 'content', e.target.value)} rows="6" />
+                    <textarea className="paragraph-input" style={{ textAlign: block.settings.align, direction: 'rtl' }} placeholder="اكتب النص هنا..." value={block.content} onChange={e => upd(block.id, 'content', e.target.value)} rows="6" />
                   </>
                 )}
                 {block.type === 'image' && (
@@ -157,6 +159,45 @@ const ArticleEditor = ({ initialBlocks = [], onBlocksChange, contentImages = [] 
                     )}
                   </>
                 )}
+                {block.type === 'article-link' && (
+                  <>
+                    <div className="block-settings"><label>المحاذاة:</label><AlignBtns block={block} /></div>
+                    <div className="article-link-editor">
+                      <div className="article-link-field">
+                        <label>اختر المقال:</label>
+                        <select
+                          value={block.linkArticleId || ''}
+                          onChange={e => upd(block.id, 'linkArticleId', e.target.value)}
+                          className="article-link-select"
+                        >
+                          <option value="">-- اختر مقال --</option>
+                          {articles.map(art => (
+                            <option key={art._id} value={art._id}>
+                              {art.titleAr || art.title}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="article-link-field">
+                        <label>نص الرابط (مثال: اقرأ المزيد عن هذا الموضوع):</label>
+                        <input
+                          type="text"
+                          className="article-link-text-input"
+                          style={{ direction: 'rtl', textAlign: 'right' }}
+                          placeholder="اقرأ المزيد عن هذا المقال..."
+                          value={block.linkText || ''}
+                          onChange={e => upd(block.id, 'linkText', e.target.value)}
+                        />
+                      </div>
+                      {block.linkArticleId && block.linkText && (
+                        <div className="article-link-preview">
+                          <span className="preview-label">معاينة:</span>
+                          <span className="preview-link">🔗 {block.linkText}</span>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
             </motion.div>
           ))}
@@ -172,6 +213,7 @@ const ArticleEditor = ({ initialBlocks = [], onBlocksChange, contentImages = [] 
             <button type="button" onClick={() => add('paragraph')} className="menu-item"><FaParagraph /><div><strong>فقرة</strong></div></button>
             <button type="button" onClick={() => add('image')} className="menu-item"><FaImage /><div><strong>صورة</strong></div></button>
             <button type="button" onClick={() => add('video')} className="menu-item"><FaVideo /><div><strong>فيديو</strong></div></button>
+            <button type="button" onClick={() => add('article-link')} className="menu-item"><FaLink /><div><strong>رابط مقال</strong></div></button>
           </motion.div>
         )}
       </div>
