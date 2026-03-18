@@ -148,6 +148,7 @@
   border: none;
   box-shadow: none;
   padding: 0;
+  direction: rtl;
 }
 
 @keyframes fadeInUp {
@@ -376,6 +377,8 @@
   border: none;
   box-shadow: none;
   padding: 0;
+  direction: rtl;
+  text-align: right;
 }
 
 .content-text p {
