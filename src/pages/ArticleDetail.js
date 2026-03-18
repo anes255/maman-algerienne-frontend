@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
-import { FaArrowRight, FaCalendar, FaEye, FaUser, FaShareAlt, FaComments, FaPaperPlane, FaTrash } from 'react-icons/fa';
+import { FaArrowRight, FaCalendar, FaEye, FaUser, FaShareAlt, FaComments, FaPaperPlane, FaTrash, FaLink } from 'react-icons/fa';
 import { getArticle, getComments, addComment, deleteComment } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -174,6 +174,15 @@ var ArticleDetail = function() {
           );
         }
         return null;
+      }
+
+      if (block.type === 'article-link' && block.linkArticleId && block.linkText) {
+        return React.createElement(motion.div, { key: key, className: 'content-block block-article-link align-' + align, initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true } },
+          React.createElement('button', {
+            className: 'article-link-btn',
+            onClick: function() { navigate('/articles/' + block.linkArticleId); }
+          }, React.createElement(FaLink, null), ' ', block.linkText)
+        );
       }
 
       return null;
