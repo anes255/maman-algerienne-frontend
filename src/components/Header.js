@@ -1,8 +1,8 @@
 import { API_BASE_URL } from '../config';
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { FaShoppingCart, FaBars, FaTimes, FaSearch, FaUser, FaSignOutAlt, FaSignInAlt } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaShoppingCart, FaBars, FaTimes, FaSearch, FaUser, FaSignOutAlt, FaSignInAlt, FaChevronDown } from 'react-icons/fa';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -13,12 +13,25 @@ const Header = () => {
   const [isHidden, setIsHidden] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
   const { getCartCount } = useCart();
   const { user, isAuthenticated, logout } = useAuth();
   const { theme } = useTheme();
   const navigate = useNavigate();
+
+  const categories = [
+    { name: 'حملي', key: 'pregnancy', icon: '🤰' },
+    { name: 'طفلي', key: 'childcare', icon: '👶' },
+    { name: 'بيتي', key: 'home', icon: '🏠' },
+    { name: 'كوزينتي', key: 'recipes', icon: '🍳' },
+    { name: 'مدرستي', key: 'education', icon: '📚' },
+    { name: 'تحويستي', key: 'trips', icon: '✈️' },
+    { name: 'صحتي', key: 'health', icon: '💪' },
+    { name: 'ديني', key: 'religion', icon: '🕌' },
+    { name: 'الأسماء', key: 'names', icon: '👶' },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,7 +40,6 @@ const Header = () => {
       
       setIsScrolled(currentScrollY > 50);
       
-      // Hide header on scroll down for mobile only
       if (isMobile) {
         if (currentScrollY > lastScrollY && currentScrollY > 100) {
           setIsHidden(true);
@@ -90,13 +102,47 @@ const Header = () => {
               <Link
                 to={item.path}
                 className="nav-link"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={() => { setIsMobileMenuOpen(false); setIsCategoriesOpen(false); }}
               >
                 <span className="ar">{item.name}</span>
                 <span className="en">{item.nameEn}</span>
               </Link>
             </motion.div>
           ))}
+
+          {/* Categories dropdown in mobile menu */}
+          <div className="mobile-categories-section">
+            <button
+              className="mobile-categories-toggle"
+              onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
+            >
+              <span>📂 الأقسام</span>
+              <FaChevronDown className={`chevron ${isCategoriesOpen ? 'open' : ''}`} />
+            </button>
+            <AnimatePresence>
+              {isCategoriesOpen && (
+                <motion.div
+                  className="mobile-categories-list"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  {categories.map((cat) => (
+                    <Link
+                      key={cat.key}
+                      to={`/articles?category=${cat.key}`}
+                      className="mobile-category-link"
+                      onClick={() => { setIsMobileMenuOpen(false); setIsCategoriesOpen(false); }}
+                    >
+                      <span className="mobile-cat-icon">{cat.icon}</span>
+                      <span>{cat.name}</span>
+                    </Link>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </nav>
 
         <div className="header-actions">
