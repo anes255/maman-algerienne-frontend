@@ -1,16 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 import { FaFilter } from 'react-icons/fa';
 import { getArticles, getCategories } from '../services/api';
 import ArticleCard from '../components/ArticleCard';
 import '../styles/Articles.css';
 
 const Articles = () => {
+  const [searchParams] = useSearchParams();
   const [articles, setArticles] = useState([]);
   const [filteredArticles, setFilteredArticles] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
   const [loading, setLoading] = useState(true);
+
+  // Update selectedCategory when URL changes
+  useEffect(() => {
+    const catParam = searchParams.get('category');
+    if (catParam) {
+      setSelectedCategory(catParam);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     loadData();
