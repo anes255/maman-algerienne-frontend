@@ -180,25 +180,6 @@ const Home = () => {
         )}
       </section>
 
-      {/* Categories Section */}
-      <section className="categories-section">
-        <div className="container">
-          <motion.h2 className="section-title" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            تصفحي أقسامنا
-          </motion.h2>
-          <div className="categories-grid">
-            {categories.map((category, index) => (
-              <motion.div key={index} className="category-card" initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} whileHover={{ scale: 1.05, y: -10 }} style={{ '--category-color': category.color }}>
-                <Link to={`/articles?category=${category.key}`}>
-                  <div className="category-icon">{category.icon}</div>
-                  <h3>{category.name}</h3>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Featured Products - Horizontal Carousel */}
       {featuredProducts.length > 0 && (
         <section className="featured-products-section">
@@ -209,7 +190,7 @@ const Home = () => {
               </motion.h2>
               <Link to="/products" className="view-all-link">عرض الكل <FaArrowLeft /></Link>
             </div>
-            <HorizontalCarousel autoScrollInterval={30000}>
+            <HorizontalCarousel autoScrollInterval={5000}>
               {featuredProducts.map((product) => (
                 <ProductCard key={product._id} product={product} />
               ))}
@@ -251,7 +232,7 @@ const Home = () => {
                 </motion.h2>
                 <Link to={`/articles?category=${cat.key}`} className="view-all-link">عرض الكل <FaArrowLeft /></Link>
               </div>
-              <HorizontalCarousel autoScrollInterval={30000}>
+              <HorizontalCarousel autoScrollInterval={5000}>
                 {arts.map((article) => (
                   <ArticleCard key={article._id} article={article} />
                 ))}
