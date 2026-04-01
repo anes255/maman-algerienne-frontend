@@ -99,11 +99,20 @@
   font-size: 0.85rem;
 }
 
-/* Hide descriptions/excerpts for compact look */
+/* Hide descriptions/excerpts and category overlay for compact look */
 .carousel-item .product-category,
 .carousel-item .article-excerpt,
-.carousel-item .category-description {
+.carousel-item .category-description,
+.carousel-item .article-overlay {
   display: none !important;
+}
+
+/* Smaller featured badge inside carousel */
+.carousel-item .featured-badge {
+  font-size: 0.65rem !important;
+  padding: 3px 8px !important;
+  top: 6px !important;
+  right: 6px !important;
 }
 
 .carousel-item .product-image,
