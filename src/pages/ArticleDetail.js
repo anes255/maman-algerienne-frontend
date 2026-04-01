@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
-import { FaArrowRight, FaCalendar, FaEye, FaUser, FaShareAlt, FaComments, FaPaperPlane, FaTrash, FaLink } from 'react-icons/fa';
-import { getArticle, getComments, addComment, deleteComment } from '../services/api';
+import { FaArrowRight, FaCalendar, FaEye, FaUser, FaShareAlt, FaComments, FaPaperPlane, FaTrash, FaLink, FaFacebookF, FaTwitter, FaWhatsapp, FaTelegram, FaCopy } from 'react-icons/fa';
+import { getArticle, getArticles, getComments, addComment, deleteComment } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import '../styles/ArticleDetail.css';
@@ -23,6 +23,8 @@ var ArticleDetail = function() {
   var commentText = _s4[0], setCommentText = _s4[1];
   var _s5 = useState(false);
   var submitting = _s5[0], setSubmitting = _s5[1];
+  var _s6 = useState([]);
+  var relatedArticles = _s6[0], setRelatedArticles = _s6[1];
   var auth = useAuth();
   var user = auth.user;
   var isAuthenticated = auth.isAuthenticated;
@@ -61,7 +63,19 @@ var ArticleDetail = function() {
 
   useEffect(function() {
     setLoading(true);
-    getArticle(id).then(function(r) { setArticle(r.data); }).catch(function() { toast.error('خطأ في تحميل المقال'); }).finally(function() { setLoading(false); });
+    getArticle(id).then(function(r) {
+      setArticle(r.data);
+      // Fetch related articles
+      if (r.data.relatedArticles && r.data.relatedArticles.length > 0) {
+        Promise.all(r.data.relatedArticles.map(function(rid) {
+          return getArticle(rid).then(function(res) { return res.data; }).catch(function() { return null; });
+        })).then(function(results) {
+          setRelatedArticles(results.filter(function(a) { return a !== null; }));
+        });
+      } else {
+        setRelatedArticles([]);
+      }
+    }).catch(function() { toast.error('خطأ في تحميل المقال'); }).finally(function() { setLoading(false); });
     loadComments();
   }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -217,8 +231,7 @@ var ArticleDetail = function() {
           React.createElement('div', { className: 'article-meta' },
             React.createElement('div', { className: 'meta-item' }, React.createElement(FaCalendar, null), React.createElement('span', null, formatDate(article.createdAt))),
             React.createElement('div', { className: 'meta-item' }, React.createElement(FaEye, null), React.createElement('span', null, (article.views || 0) + ' مشاهدة')),
-            article.author && React.createElement('div', { className: 'meta-item' }, React.createElement(FaUser, null), React.createElement('span', null, article.author)),
-            React.createElement('button', { className: 'share-btn', onClick: handleShare, title: 'مشاركة المقال' }, React.createElement(FaShareAlt, null), ' مشاركة')
+            article.author && React.createElement('div', { className: 'meta-item' }, React.createElement(FaUser, null), React.createElement('span', null, article.author))
           )
         ),
         article.image && React.createElement('div', { className: 'article-hero-image' },
@@ -239,6 +252,62 @@ var ArticleDetail = function() {
                 })
               )
             )
+        ),
+        // Social Share Section
+        React.createElement('div', { className: 'social-share-section' },
+          React.createElement('h3', { className: 'share-section-title' }, React.createElement(FaShareAlt, null), ' شاركي هذا المقال'),
+          React.createElement('div', { className: 'share-buttons' },
+            React.createElement('button', {
+              className: 'share-icon-btn facebook',
+              onClick: function() { window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(API_BASE_URL + '/share/article/' + id), '_blank'); },
+              title: 'فيسبوك'
+            }, React.createElement(FaFacebookF, null), React.createElement('span', null, 'فيسبوك')),
+            React.createElement('button', {
+              className: 'share-icon-btn twitter',
+              onClick: function() { window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(API_BASE_URL + '/share/article/' + id) + '&text=' + encodeURIComponent(articleTitle), '_blank'); },
+              title: 'تويتر'
+            }, React.createElement(FaTwitter, null), React.createElement('span', null, 'تويتر')),
+            React.createElement('button', {
+              className: 'share-icon-btn whatsapp',
+              onClick: function() { window.open('https://wa.me/?text=' + encodeURIComponent(articleTitle + ' ' + API_BASE_URL + '/share/article/' + id), '_blank'); },
+              title: 'واتساب'
+            }, React.createElement(FaWhatsapp, null), React.createElement('span', null, 'واتساب')),
+            React.createElement('button', {
+              className: 'share-icon-btn telegram',
+              onClick: function() { window.open('https://t.me/share/url?url=' + encodeURIComponent(API_BASE_URL + '/share/article/' + id) + '&text=' + encodeURIComponent(articleTitle), '_blank'); },
+              title: 'تيليغرام'
+            }, React.createElement(FaTelegram, null), React.createElement('span', null, 'تيليغرام')),
+            React.createElement('button', {
+              className: 'share-icon-btn copy-link',
+              onClick: function() {
+                navigator.clipboard.writeText(API_BASE_URL + '/share/article/' + id).then(function() { toast.success('تم نسخ الرابط'); }).catch(function() { toast.error('فشل نسخ الرابط'); });
+              },
+              title: 'نسخ الرابط'
+            }, React.createElement(FaCopy, null), React.createElement('span', null, 'نسخ الرابط'))
+          )
+        ),
+        // Related Articles Section
+        relatedArticles.length > 0 && React.createElement('div', { className: 'related-articles-section' },
+          React.createElement('h3', { className: 'related-title' }, '📖 مقالات ذات صلة'),
+          React.createElement('div', { className: 'related-articles-grid' },
+            relatedArticles.map(function(ra) {
+              return React.createElement(motion.div, {
+                key: ra._id,
+                className: 'related-article-card',
+                whileHover: { y: -5 },
+                onClick: function() { navigate('/articles/' + ra._id); }
+              },
+                React.createElement('div', { className: 'related-article-image' },
+                  React.createElement('img', { src: getImageUrl(ra.image), alt: ra.titleAr || ra.title })
+                ),
+                React.createElement('div', { className: 'related-article-info' },
+                  React.createElement('h4', null, ra.titleAr || ra.title),
+                  React.createElement('p', null, (ra.contentAr || ra.content || '').substring(0, 80) + '...'),
+                  React.createElement('span', { className: 'related-read-more' }, 'اقرأ المزيد ←')
+                )
+              );
+            })
+          )
         ),
         // Comments Section
         React.createElement('div', { className: 'comments-section' },
