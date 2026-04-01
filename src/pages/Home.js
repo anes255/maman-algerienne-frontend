@@ -14,10 +14,10 @@ const HorizontalCarousel = ({ children, autoScrollInterval = 30000 }) => {
   const timerRef = useRef(null);
 
   const getScrollAmount = () => {
-    if (!trackRef.current) return 300;
+    if (!trackRef.current) return 440;
     var firstChild = trackRef.current.querySelector('.carousel-item');
-    if (!firstChild) return 300;
-    return firstChild.offsetWidth + 20; // card width + gap
+    if (!firstChild) return 440;
+    return (firstChild.offsetWidth + 20) * 2; // 2 cards at a time
   };
 
   const scroll = useCallback((dir) => {
