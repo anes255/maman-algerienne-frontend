@@ -267,6 +267,7 @@
     transition: right 0.3s ease;
     align-items: flex-start;
     z-index: 999;
+    overflow-y: auto;
   }
 
   .nav-menu.active {
