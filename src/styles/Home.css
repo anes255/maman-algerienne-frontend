@@ -52,13 +52,13 @@
 }
 
 .carousel-item {
-  flex: 0 0 280px;
-  min-width: 280px;
+  flex: 0 0 200px;
+  min-width: 200px;
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 .carousel-item:hover {
-  transform: translateY(-6px);
+  transform: translateY(-4px);
 }
 
 /* Carousel arrows */
@@ -91,12 +91,52 @@
 .carousel-arrow-left { left: 5px; }
 .carousel-arrow-right { right: 5px; }
 
-/* Override card styles inside carousel */
+/* Compact card styles inside carousel */
 .carousel-item .product-card,
 .carousel-item .article-card {
   width: 100%;
   margin: 0;
+  font-size: 0.85rem;
 }
+
+/* Hide descriptions/excerpts for compact look */
+.carousel-item .product-category,
+.carousel-item .article-excerpt,
+.carousel-item .category-description {
+  display: none !important;
+}
+
+.carousel-item .product-image,
+.carousel-item .article-image {
+  height: 160px;
+}
+
+.carousel-item .product-image img,
+.carousel-item .article-image img {
+  height: 100%;
+  object-fit: cover;
+}
+
+.carousel-item .product-name,
+.carousel-item .article-title {
+  font-size: 0.85rem !important;
+  margin-bottom: 4px !important;
+  -webkit-line-clamp: 1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.carousel-item .product-info,
+.carousel-item .article-content {
+  padding: 10px 12px !important;
+}
+
+.carousel-item .product-footer { margin-top: 6px; }
+.carousel-item .product-price { font-size: 0.9rem; }
+.carousel-item .add-to-cart-btn span { display: none; }
+.carousel-item .article-meta { font-size: 0.75rem; gap: 8px; }
+.carousel-item .read-more { font-size: 0.8rem; }
 
 /* ══════ Featured Products Carousel ══════ */
 .featured-products-section {
@@ -198,14 +238,19 @@
   }
 
   .carousel-item {
-    flex: 0 0 240px;
-    min-width: 240px;
+    flex: 0 0 160px;
+    min-width: 160px;
+  }
+
+  .carousel-item .product-image,
+  .carousel-item .article-image {
+    height: 120px;
   }
 
   .carousel-arrow {
-    width: 36px;
-    height: 36px;
-    font-size: 0.85rem;
+    width: 34px;
+    height: 34px;
+    font-size: 0.8rem;
   }
 
   .articles-grid { grid-template-columns: 1fr; gap: 20px; margin-top: 20px; }
