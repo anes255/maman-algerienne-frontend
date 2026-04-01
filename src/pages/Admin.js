@@ -32,6 +32,7 @@ const Admin = () => {
   const [currentItem, setCurrentItem] = useState(null);
   const [contentBlocks, setContentBlocks] = useState([]);
   const [uploadedContentImages, setUploadedContentImages] = useState([]);
+  const [selectedRelatedArticles, setSelectedRelatedArticles] = useState([]);
 
   // Article categories
   const articleCategories = [
@@ -93,6 +94,7 @@ const Admin = () => {
     setCurrentItem(null);
     setContentBlocks([]);
     setUploadedContentImages([]);
+    setSelectedRelatedArticles([]);
     setShowModal(true);
   };
 
@@ -100,10 +102,10 @@ const Admin = () => {
     setModalMode('edit');
     setCurrentItem(item);
     setContentBlocks(item.contentBlocks || []);
+    setSelectedRelatedArticles(item.relatedArticles || []);
     
     // Convert server image paths to full URLs for display
     const images = item.contentImages ? item.contentImages.map(img => {
-      // If it's already a full URL (blob or http), use it; otherwise prepend server URL
       return img.startsWith('blob:') || img.startsWith('http') ? img : `${API_BASE_URL}${img}`;
     }) : [];
     setUploadedContentImages(images);
@@ -152,6 +154,11 @@ const Admin = () => {
         return block;
       });
       formData.append('contentBlocks', JSON.stringify(processedBlocks));
+    }
+
+    // Add related articles for articles
+    if (type === 'article') {
+      formData.append('relatedArticles', JSON.stringify(selectedRelatedArticles));
     }
 
     try {
@@ -942,6 +949,41 @@ const Admin = () => {
                     contentImages={uploadedContentImages}
                     articles={articles}
                   />
+                )}
+
+                {activeTab === 'articles' && (
+                  <div className="form-group related-articles-admin">
+                    <label>مقالات ذات صلة (تظهر في أسفل المقال)</label>
+                    <select
+                      onChange={(e) => {
+                        var val = e.target.value;
+                        if (val && !selectedRelatedArticles.includes(val)) {
+                          setSelectedRelatedArticles(prev => [...prev, val]);
+                        }
+                        e.target.value = '';
+                      }}
+                      defaultValue=""
+                    >
+                      <option value="">-- اختر مقال لإضافته --</option>
+                      {articles.filter(a => !selectedRelatedArticles.includes(a._id) && (!currentItem || a._id !== currentItem._id)).map(a => (
+                        <option key={a._id} value={a._id}>{a.titleAr || a.title}</option>
+                      ))}
+                    </select>
+                    {selectedRelatedArticles.length > 0 && (
+                      <div className="related-tags">
+                        {selectedRelatedArticles.map(rid => {
+                          var art = articles.find(a => a._id === rid);
+                          return (
+                            <span key={rid} className="related-tag">
+                              {art ? (art.titleAr || art.title) : rid}
+                              <button type="button" onClick={() => setSelectedRelatedArticles(prev => prev.filter(x => x !== rid))}>✕</button>
+                            </span>
+                          );
+                        })}
+                      </div>
+                    )}
+                    <small className="form-hint">اختر المقالات التي تريد عرضها في أسفل هذا المقال</small>
+                  </div>
                 )}
                 </>
                 )}
