@@ -45,6 +45,9 @@
   scrollbar-width: none;
   padding: 10px 5px 15px;
   direction: ltr; /* always scroll LTR for horizontal */
+  touch-action: pan-x;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .carousel-track::-webkit-scrollbar {
@@ -55,6 +58,13 @@
   flex: 0 0 200px;
   min-width: 200px;
   transition: transform 0.3s ease, opacity 0.3s ease;
+  touch-action: pan-x;
+  -webkit-user-drag: none;
+}
+
+.carousel-item img {
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 .carousel-item:hover {
