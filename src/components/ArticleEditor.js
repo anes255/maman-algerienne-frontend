@@ -233,7 +233,7 @@ const ArticleEditor = ({ initialBlocks = [], onBlocksChange, contentImages = [],
                       {block.downloadLinkId && block.downloadText && (
                         <div className="article-link-preview">
                           <span className="preview-label">معاينة:</span>
-                          <span className="preview-link" style={{ color: '#27ae60' }}>📥 {block.downloadText}</span>
+                          <span className="preview-link" style={{ color: '#FF69B4' }}>📥 {block.downloadText}</span>
                         </div>
                       )}
                     </div>
