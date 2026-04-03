@@ -70,6 +70,8 @@ const Home = () => {
   const [heroAds, setHeroAds] = useState([]);
   const [sponsorAds, setSponsorAds] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [productsLoaded, setProductsLoaded] = useState(false);
+  const [articlesLoaded, setArticlesLoaded] = useState(false);
 
   useEffect(() => { loadData(); }, []);
 
@@ -84,18 +86,33 @@ const Home = () => {
 
   const loadData = async () => {
     try {
-      const [productsRes, articlesRes, allArticlesRes, heroAdsRes, sponsorAdsRes] = await Promise.all([
-        getProducts({ featured: true }),
-        getArticles({ featured: true }),
-        getArticles(),
-        getAds({ position: 'hero', active: true }),
-        getAds({ position: 'sponsor', active: true })
-      ]);
-      setFeaturedProducts(Array.isArray(productsRes.data) ? productsRes.data.slice(0, 12) : []);
-      setFeaturedArticles(Array.isArray(articlesRes.data) ? articlesRes.data.slice(0, 6) : []);
-      setAllArticles(Array.isArray(allArticlesRes.data) ? allArticlesRes.data : []);
-      setHeroAds(Array.isArray(heroAdsRes.data) ? heroAdsRes.data : []);
-      setSponsorAds(Array.isArray(sponsorAdsRes.data) ? sponsorAdsRes.data : []);
+      // Fire all requests simultaneously but don't block rendering
+      const productsPromise = getProducts({ featured: true });
+      const featuredArticlesPromise = getArticles({ featured: true });
+      const allArticlesPromise = getArticles();
+      const heroAdsPromise = getAds({ position: 'hero', active: true });
+      const sponsorAdsPromise = getAds({ position: 'sponsor', active: true });
+
+      // Load hero ads first (most visible)
+      heroAdsPromise.then(res => setHeroAds(Array.isArray(res.data) ? res.data : [])).catch(() => {});
+
+      // Load products
+      productsPromise.then(res => {
+        setFeaturedProducts(Array.isArray(res.data) ? res.data.slice(0, 12) : []);
+        setProductsLoaded(true);
+      }).catch(() => setProductsLoaded(true));
+
+      // Load featured articles
+      featuredArticlesPromise.then(res => {
+        setFeaturedArticles(Array.isArray(res.data) ? res.data.slice(0, 6) : []);
+        setArticlesLoaded(true);
+      }).catch(() => setArticlesLoaded(true));
+
+      // Load all articles for category sections
+      allArticlesPromise.then(res => setAllArticles(Array.isArray(res.data) ? res.data : [])).catch(() => {});
+
+      // Load sponsor ads
+      sponsorAdsPromise.then(res => setSponsorAds(Array.isArray(res.data) ? res.data : [])).catch(() => {});
     } catch (error) {
       console.error('Error loading data:', error);
     }
@@ -181,42 +198,62 @@ const Home = () => {
       </section>
 
       {/* Featured Products - Horizontal Carousel */}
-      {featuredProducts.length > 0 && (
-        <section className="featured-products-section">
-          <div className="container">
-            <div className="section-header">
-              <motion.h2 className="section-title" initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-                منتجات مميزة
-              </motion.h2>
-              <Link to="/products" className="view-all-link">عرض الكل <FaArrowLeft /></Link>
+      <section className="featured-products-section">
+        <div className="container">
+          <div className="section-header">
+            <motion.h2 className="section-title" initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+              منتجات مميزة
+            </motion.h2>
+            <Link to="/products" className="view-all-link">عرض الكل <FaArrowLeft /></Link>
+          </div>
+          {!productsLoaded ? (
+            <div className="skeleton-carousel">
+              {[1,2,3,4].map(i => (
+                <div key={i} className="skeleton-card">
+                  <div className="skeleton-img"></div>
+                  <div className="skeleton-line"></div>
+                  <div className="skeleton-line short"></div>
+                </div>
+              ))}
             </div>
+          ) : featuredProducts.length > 0 ? (
             <HorizontalCarousel autoScrollInterval={5000}>
               {featuredProducts.map((product) => (
                 <ProductCard key={product._id} product={product} />
               ))}
             </HorizontalCarousel>
-          </div>
-        </section>
-      )}
+          ) : null}
+        </div>
+      </section>
 
       {/* Featured Articles Section */}
-      {featuredArticles.length > 0 && (
-        <section className="featured-articles-section">
-          <div className="container">
-            <div className="section-header">
-              <motion.h2 className="section-title" initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-                أحدث المقالات
-              </motion.h2>
-              <Link to="/articles" className="view-all-link">عرض الكل <FaArrowLeft /></Link>
+      <section className="featured-articles-section">
+        <div className="container">
+          <div className="section-header">
+            <motion.h2 className="section-title" initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+              أحدث المقالات
+            </motion.h2>
+            <Link to="/articles" className="view-all-link">عرض الكل <FaArrowLeft /></Link>
+          </div>
+          {!articlesLoaded ? (
+            <div className="articles-grid">
+              {[1,2,3].map(i => (
+                <div key={i} className="skeleton-card skeleton-article">
+                  <div className="skeleton-img tall"></div>
+                  <div className="skeleton-line"></div>
+                  <div className="skeleton-line short"></div>
+                </div>
+              ))}
             </div>
+          ) : featuredArticles.length > 0 ? (
             <div className="articles-grid">
               {featuredArticles.map((article) => (
                 <ArticleCard key={article._id} article={article} />
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          ) : null}
+        </div>
+      </section>
 
       {/* Category Article Carousels */}
       {categories.map(function(cat) {
