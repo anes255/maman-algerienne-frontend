@@ -65,6 +65,9 @@ const Admin = () => {
         case 'articles':
           const articlesRes = await getArticles();
           setArticles(articlesRes.data);
+          // Also load links for download-link blocks in article editor
+          const linksForArticles = await getLinks();
+          setLinks(linksForArticles.data);
           break;
         case 'ads':
           const adsRes = await getAds();
@@ -948,6 +951,7 @@ const Admin = () => {
                     onBlocksChange={handleBlocksChange}
                     contentImages={uploadedContentImages}
                     articles={articles}
+                    downloadLinks={links}
                   />
                 )}
 
