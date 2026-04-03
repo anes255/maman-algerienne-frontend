@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaPlus, FaTrash, FaArrowUp, FaArrowDown, FaHeading, FaParagraph, FaImage, FaAlignLeft, FaAlignCenter, FaAlignRight, FaVideo, FaLink } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaArrowUp, FaArrowDown, FaHeading, FaParagraph, FaImage, FaAlignLeft, FaAlignCenter, FaAlignRight, FaVideo, FaLink, FaDownload } from 'react-icons/fa';
 import { getImageUrl } from '../config';
 import '../styles/ArticleEditor.css';
 
-const ArticleEditor = ({ initialBlocks = [], onBlocksChange, contentImages = [], articles = [] }) => {
+const ArticleEditor = ({ initialBlocks = [], onBlocksChange, contentImages = [], articles = [], downloadLinks = [] }) => {
   const [blocks, setBlocks] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
   const init = useRef(false);
@@ -29,6 +29,7 @@ const ArticleEditor = ({ initialBlocks = [], onBlocksChange, contentImages = [],
       id: `b-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
       type, content: '', imageUrl: '', videoUrl: '', caption: '',
       linkArticleId: '', linkText: '',
+      downloadLinkId: '', downloadText: '',
       settings: { size: type === 'heading' ? 'h2' : type === 'video' ? 'large' : 'medium', align: 'right' }
     }]);
     setShowMenu(false);
@@ -72,6 +73,7 @@ const ArticleEditor = ({ initialBlocks = [], onBlocksChange, contentImages = [],
         {block.type === 'heading' && '📝 عنوان'}{block.type === 'paragraph' && '📄 فقرة'}
         {block.type === 'image' && '🖼️ صورة'}{block.type === 'video' && '🎥 فيديو'}
         {block.type === 'article-link' && '🔗 رابط مقال'}
+        {block.type === 'download-link' && '📥 زر تحميل'}
       </span>
       <div className="block-actions">
         <button type="button" onClick={() => move(index, -1)} disabled={index === 0} className="btn-icon"><FaArrowUp /></button>
@@ -198,6 +200,45 @@ const ArticleEditor = ({ initialBlocks = [], onBlocksChange, contentImages = [],
                     </div>
                   </>
                 )}
+                {block.type === 'download-link' && (
+                  <>
+                    <div className="block-settings"><label>المحاذاة:</label><AlignBtns block={block} /></div>
+                    <div className="article-link-editor">
+                      <div className="article-link-field">
+                        <label>اختر ملف التحميل:</label>
+                        <select
+                          value={block.downloadLinkId || ''}
+                          onChange={e => upd(block.id, 'downloadLinkId', e.target.value)}
+                          className="article-link-select"
+                        >
+                          <option value="">-- اختر ملف --</option>
+                          {downloadLinks.map(link => (
+                            <option key={link._id} value={link._id}>
+                              {link.titleAr || link.title}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="article-link-field">
+                        <label>نص زر التحميل:</label>
+                        <input
+                          type="text"
+                          className="article-link-text-input"
+                          style={{ direction: 'rtl', textAlign: 'right' }}
+                          placeholder="حملي الملف..."
+                          value={block.downloadText || ''}
+                          onChange={e => upd(block.id, 'downloadText', e.target.value)}
+                        />
+                      </div>
+                      {block.downloadLinkId && block.downloadText && (
+                        <div className="article-link-preview">
+                          <span className="preview-label">معاينة:</span>
+                          <span className="preview-link" style={{ color: '#27ae60' }}>📥 {block.downloadText}</span>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
             </motion.div>
           ))}
@@ -214,6 +255,7 @@ const ArticleEditor = ({ initialBlocks = [], onBlocksChange, contentImages = [],
             <button type="button" onClick={() => add('image')} className="menu-item"><FaImage /><div><strong>صورة</strong></div></button>
             <button type="button" onClick={() => add('video')} className="menu-item"><FaVideo /><div><strong>فيديو</strong></div></button>
             <button type="button" onClick={() => add('article-link')} className="menu-item"><FaLink /><div><strong>رابط مقال</strong></div></button>
+            <button type="button" onClick={() => add('download-link')} className="menu-item"><FaDownload /><div><strong>زر تحميل</strong></div></button>
           </motion.div>
         )}
       </div>
