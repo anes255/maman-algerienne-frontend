@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
-import { FaArrowRight, FaCalendar, FaEye, FaUser, FaShareAlt, FaComments, FaPaperPlane, FaTrash, FaLink, FaFacebookF, FaTwitter, FaWhatsapp, FaTelegram, FaCopy } from 'react-icons/fa';
+import { FaArrowRight, FaCalendar, FaEye, FaUser, FaShareAlt, FaComments, FaPaperPlane, FaTrash, FaLink, FaFacebookF, FaTwitter, FaWhatsapp, FaTelegram, FaCopy, FaDownload } from 'react-icons/fa';
 import { getArticle, getArticles, getComments, addComment, deleteComment } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -196,6 +196,15 @@ var ArticleDetail = function() {
             className: 'article-link-btn',
             onClick: function() { navigate('/articles/' + block.linkArticleId); }
           }, React.createElement(FaLink, null), ' ', block.linkText)
+        );
+      }
+
+      if (block.type === 'download-link' && block.downloadLinkId && block.downloadText) {
+        return React.createElement(motion.div, { key: key, className: 'content-block block-download-link align-' + align, initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true } },
+          React.createElement('button', {
+            className: 'download-link-btn',
+            onClick: function() { window.open(API_BASE_URL + '/api/links/' + block.downloadLinkId + '/download', '_blank'); }
+          }, React.createElement(FaDownload, null), ' ', block.downloadText)
         );
       }
 
