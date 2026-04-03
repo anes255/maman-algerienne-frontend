@@ -63,15 +63,22 @@ const HorizontalCarousel = ({ children, autoScrollInterval = 30000 }) => {
   );
 };
 
+// Cache helpers - show cached data instantly, refresh in background
+const CACHE_KEY = 'home_cache';
+const getCache = () => { try { return JSON.parse(localStorage.getItem(CACHE_KEY)) || {}; } catch(e) { return {}; } };
+const setCache = (key, data) => { try { var c = getCache(); c[key] = data; localStorage.setItem(CACHE_KEY, JSON.stringify(c)); } catch(e) {} };
+
 const Home = () => {
-  const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [featuredArticles, setFeaturedArticles] = useState([]);
-  const [allArticles, setAllArticles] = useState([]);
-  const [heroAds, setHeroAds] = useState([]);
-  const [sponsorAds, setSponsorAds] = useState([]);
+  // Load from cache immediately so page renders with real data on return visits
+  const cached = getCache();
+  const [featuredProducts, setFeaturedProducts] = useState(cached.featuredProducts || []);
+  const [featuredArticles, setFeaturedArticles] = useState(cached.featuredArticles || []);
+  const [allArticles, setAllArticles] = useState(cached.allArticles || []);
+  const [heroAds, setHeroAds] = useState(cached.heroAds || []);
+  const [sponsorAds, setSponsorAds] = useState(cached.sponsorAds || []);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [productsLoaded, setProductsLoaded] = useState(false);
-  const [articlesLoaded, setArticlesLoaded] = useState(false);
+  const [productsLoaded, setProductsLoaded] = useState(cached.featuredProducts ? true : false);
+  const [articlesLoaded, setArticlesLoaded] = useState(cached.featuredArticles ? true : false);
 
   useEffect(() => { loadData(); }, []);
 
@@ -86,33 +93,31 @@ const Home = () => {
 
   const loadData = async () => {
     try {
-      // Fire all requests simultaneously but don't block rendering
-      const productsPromise = getProducts({ featured: true });
-      const featuredArticlesPromise = getArticles({ featured: true });
-      const allArticlesPromise = getArticles();
-      const heroAdsPromise = getAds({ position: 'hero', active: true });
-      const sponsorAdsPromise = getAds({ position: 'sponsor', active: true });
+      // Fire all requests simultaneously - each updates its section independently
+      getAds({ position: 'hero', active: true }).then(res => {
+        var d = Array.isArray(res.data) ? res.data : [];
+        setHeroAds(d); setCache('heroAds', d);
+      }).catch(() => {});
 
-      // Load hero ads first (most visible)
-      heroAdsPromise.then(res => setHeroAds(Array.isArray(res.data) ? res.data : [])).catch(() => {});
-
-      // Load products
-      productsPromise.then(res => {
-        setFeaturedProducts(Array.isArray(res.data) ? res.data.slice(0, 12) : []);
-        setProductsLoaded(true);
+      getProducts({ featured: true }).then(res => {
+        var d = Array.isArray(res.data) ? res.data.slice(0, 12) : [];
+        setFeaturedProducts(d); setProductsLoaded(true); setCache('featuredProducts', d);
       }).catch(() => setProductsLoaded(true));
 
-      // Load featured articles
-      featuredArticlesPromise.then(res => {
-        setFeaturedArticles(Array.isArray(res.data) ? res.data.slice(0, 6) : []);
-        setArticlesLoaded(true);
+      getArticles({ featured: true }).then(res => {
+        var d = Array.isArray(res.data) ? res.data.slice(0, 6) : [];
+        setFeaturedArticles(d); setArticlesLoaded(true); setCache('featuredArticles', d);
       }).catch(() => setArticlesLoaded(true));
 
-      // Load all articles for category sections
-      allArticlesPromise.then(res => setAllArticles(Array.isArray(res.data) ? res.data : [])).catch(() => {});
+      getArticles().then(res => {
+        var d = Array.isArray(res.data) ? res.data : [];
+        setAllArticles(d); setCache('allArticles', d);
+      }).catch(() => {});
 
-      // Load sponsor ads
-      sponsorAdsPromise.then(res => setSponsorAds(Array.isArray(res.data) ? res.data : [])).catch(() => {});
+      getAds({ position: 'sponsor', active: true }).then(res => {
+        var d = Array.isArray(res.data) ? res.data : [];
+        setSponsorAds(d); setCache('sponsorAds', d);
+      }).catch(() => {});
     } catch (error) {
       console.error('Error loading data:', error);
     }
