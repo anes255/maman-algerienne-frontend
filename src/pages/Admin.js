@@ -365,6 +365,7 @@ const Admin = () => {
                             src={product.image.startsWith('http') ? product.image : `${API_BASE_URL}${product.image}`}
                             alt={product.name}
                             className="table-image"
+                            loading="lazy"
                           />
                         </td>
                         <td>{product.name}</td>
@@ -372,18 +373,20 @@ const Admin = () => {
                         <td>{product.category}</td>
                         <td>{product.stock}</td>
                         <td>
-                          <button
-                            className="edit-btn"
-                            onClick={() => handleEdit(product)}
-                          >
-                            <FaEdit />
-                          </button>
-                          <button
-                            className="delete-btn"
-                            onClick={() => handleDelete(product._id, 'product')}
-                          >
-                            <FaTrash />
-                          </button>
+                          <div className="action-buttons">
+                            <button
+                              className="edit-btn"
+                              onClick={() => handleEdit(product)}
+                            >
+                              <FaEdit />
+                            </button>
+                            <button
+                              className="delete-btn"
+                              onClick={() => handleDelete(product._id, 'product')}
+                            >
+                              <FaTrash />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -426,6 +429,7 @@ const Admin = () => {
                             src={article.image.startsWith('http') ? article.image : `${API_BASE_URL}${article.image}`}
                             alt={article.title}
                             className="table-image"
+                            loading="lazy"
                           />
                         </td>
                         <td>{article.title}</td>
@@ -433,18 +437,20 @@ const Admin = () => {
                         <td>{article.views}</td>
                         <td>{new Date(article.createdAt).toLocaleDateString('ar-DZ')}</td>
                         <td>
-                          <button
-                            className="edit-btn"
-                            onClick={() => handleEdit(article)}
-                          >
-                            <FaEdit />
-                          </button>
-                          <button
-                            className="delete-btn"
-                            onClick={() => handleDelete(article._id, 'article')}
-                          >
-                            <FaTrash />
-                          </button>
+                          <div className="action-buttons">
+                            <button
+                              className="edit-btn"
+                              onClick={() => handleEdit(article)}
+                            >
+                              <FaEdit />
+                            </button>
+                            <button
+                              className="delete-btn"
+                              onClick={() => handleDelete(article._id, 'article')}
+                            >
+                              <FaTrash />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -658,7 +664,7 @@ const Admin = () => {
                       <tr key={link._id}>
                         <td>
                           {link.image && (
-                            <img src={`${API_BASE_URL}${link.image}`} alt={link.title} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px' }} />
+                            <img src={link.image && (link.image.startsWith('http') ? link.image : `${API_BASE_URL}${link.image}`)} alt={link.title} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px' }} />
                           )}
                         </td>
                         <td>

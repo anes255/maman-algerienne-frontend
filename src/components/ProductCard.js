@@ -20,7 +20,7 @@ const ProductCard = ({ product }) => {
     <motion.div className="product-card" initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} whileHover={{ y: -10 }} transition={{ duration: 0.3 }}>
       <Link to={`/products/${product._id}`} className="product-card-link">
         <div className="product-image">
-          <img src={getImageUrl(product.image)} alt={product.name} />
+          <img src={getImageUrl(product.image)} alt={product.name} loading="lazy" />
           {product.featured && <motion.span className="featured-badge" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2 }}>مميز</motion.span>}
           <div className="product-overlay"><motion.button className="overlay-btn" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}><FaEye /></motion.button></div>
         </div>

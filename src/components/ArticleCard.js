@@ -12,7 +12,7 @@ const ArticleCard = ({ article }) => {
     <motion.div className="article-card" initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} whileHover={{ y: -10 }} transition={{ duration: 0.3 }}>
       <Link to={`/articles/${article._id}`}>
         <div className="article-image">
-          <img src={getImageUrl(article.image)} alt={article.title} />
+          <img src={getImageUrl(article.image)} alt={article.title} loading="lazy" />
           {article.featured && <motion.span className="featured-badge" initial={{ scale: 0 }} animate={{ scale: 1 }}>مميز</motion.span>}
           <div className="article-overlay"><span className="article-category">{article.category}</span></div>
         </div>

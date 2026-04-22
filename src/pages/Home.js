@@ -104,15 +104,13 @@ const Home = () => {
         setFeaturedProducts(d); setProductsLoaded(true); setCache('featuredProducts', d);
       }).catch(() => setProductsLoaded(true));
 
-      getArticles({ featured: true }).then(res => {
-        var d = Array.isArray(res.data) ? res.data.slice(0, 6) : [];
-        setFeaturedArticles(d); setArticlesLoaded(true); setCache('featuredArticles', d);
-      }).catch(() => setArticlesLoaded(true));
-
       getArticles().then(res => {
         var d = Array.isArray(res.data) ? res.data : [];
         setAllArticles(d); setCache('allArticles', d);
-      }).catch(() => {});
+        setFeaturedArticles(d.filter(a => a.featured).slice(0, 6));
+        setArticlesLoaded(true);
+        setCache('featuredArticles', d.filter(a => a.featured).slice(0, 6));
+      }).catch(() => setArticlesLoaded(true));
 
       getAds({ position: 'sponsor', active: true }).then(res => {
         var d = Array.isArray(res.data) ? res.data : [];
@@ -156,7 +154,7 @@ const Home = () => {
                 animate={{ opacity: index === currentSlide ? 1 : 0 }}
                 transition={{ duration: 0.5 }}
                 style={{
-                  backgroundImage: `url(${API_BASE_URL}${ad.image})`
+                  backgroundImage: `url(${ad.image && ad.image.startsWith('http') ? ad.image : API_BASE_URL + ad.image})`
                 }}
               >
                 <div className="hero-overlay">
