@@ -1,884 +1,369 @@
-.article-detail-page {
-  padding: 40px 0;
-  min-height: 80vh;
-  background: linear-gradient(135deg, #fff5f7 0%, #ffe8ef 100%);
-}
-
-.back-button {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: white;
-  border: 2px solid var(--primary-color);
-  color: var(--primary-color);
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  margin-bottom: 30px;
-  padding: 12px 24px;
-  border-radius: 30px;
-  transition: var(--transition);
-  box-shadow: 0 2px 8px rgba(255, 105, 180, 0.2);
-}
-
-.back-button:hover {
-  background: var(--primary-color);
-  color: white;
-  transform: translateX(5px);
-  box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
-}
-
-.article-detail {
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
-
-.article-header {
-  padding: 50px 40px;
-  background: linear-gradient(135deg, rgba(255, 105, 180, 0.15), rgba(255, 182, 193, 0.15));
-  border-bottom: 3px solid var(--primary-color);
-  position: relative;
-}
-
-.article-header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--primary-color));
-}
-
-.article-meta-top {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.article-category {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  color: white;
-  padding: 10px 24px;
-  border-radius: 25px;
-  font-weight: 700;
-  font-size: 0.95rem;
-  box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.featured-badge {
-  background: linear-gradient(135deg, #FFD700, #FFA500);
-  color: white;
-  padding: 10px 24px;
-  border-radius: 25px;
-  font-weight: 700;
-  font-size: 0.95rem;
-  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-.article-header h1 {
-  font-size: 2.8rem;
-  color: var(--text-color);
-  line-height: 1.3;
-  margin-bottom: 24px;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.article-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 30px;
-  color: #666;
-  font-size: 0.95rem;
-}
-
-.meta-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.meta-item svg {
-  color: var(--primary-color);
-}
-
-.article-image-container {
-  width: 100%;
-  height: 500px;
-  overflow: hidden;
-}
-
-.article-main-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.article-content {
-  padding: 70px 50px;
-  background: white;
-}
-
-.flexible-content {
-  max-width: 900px;
-  margin: 0 auto;
-  direction: rtl;
-}
-
-.content-block {
-  margin-bottom: 50px;
-  animation: fadeInUp 0.6s ease-out;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-  direction: rtl;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.content-block h2 {
-  font-size: 2.2rem;
-  color: var(--primary-color);
-  font-weight: 800;
-  margin-bottom: 24px;
-  line-height: 1.4;
-  position: relative;
-  padding-bottom: 16px;
-}
-
-.content-block h2::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 100px;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary-color), transparent);
-  border-radius: 2px;
-}
-
-.content-block h3 {
-  font-size: 1.8rem;
-  color: var(--primary-color);
-  font-weight: 700;
-  margin-bottom: 20px;
-  line-height: 1.4;
-  position: relative;
-  padding-right: 20px;
-}
-
-.content-block h3::before {
-  content: '▸';
-  position: absolute;
-  right: 0;
-  color: var(--primary-color);
-  font-size: 1.5rem;
-}
-
-.content-block h4 {
-  font-size: 1.4rem;
-  color: var(--primary-color);
-  font-weight: 600;
-  margin-bottom: 16px;
-  line-height: 1.4;
-  padding-right: 15px;
-  border-right: 4px solid var(--primary-color);
-}
-
-.content-block p {
-  font-size: 1.15rem;
-  line-height: 2;
-  color: #444;
-  margin-bottom: 24px;
-  text-align: justify;
-  font-weight: 400;
-}
-
-/* First letter styling removed as per user request */
-
-.block-image {
-  margin: 40px 0;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease;
-}
-
-.block-image:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-}
-
-.block-image img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.block-image.size-small {
-  width: 33%;
-}
-
-.block-image.size-medium {
-  width: 66%;
-}
-
-.block-image.size-large {
-  width: 90%;
-}
-
-.block-image.size-full {
-  width: 100%;
-}
-
-.block-image.align-left {
-  margin-left: 0;
-  margin-right: auto;
-}
-
-.block-image.align-center {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.block-image.align-right {
-  margin-left: auto;
-  margin-right: 0;
-}
-
-.block-video {
-  margin: 40px 0;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-}
-
-.block-video .video-wrapper {
-  position: relative;
-  padding-bottom: 56.25%; /* 16:9 aspect ratio */
-  height: 0;
-  overflow: hidden;
-}
-
-.block-video .video-wrapper iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-.block-video.size-medium {
-  width: 66%;
-}
-
-.block-video.size-large {
-  width: 90%;
-}
-
-.block-video.size-full {
-  width: 100%;
-}
-
-.block-video.align-left {
-  margin-left: 0;
-  margin-right: auto;
-}
-
-.block-video.align-center {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.block-video.align-right {
-  margin-left: auto;
-  margin-right: 0;
-}
-
-/* Article Link Block */
-.block-article-link {
-  margin: 30px 0;
-}
-
-.block-article-link .article-link-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 28px;
-  background: linear-gradient(135deg, var(--primary-color, #FF69B4), var(--secondary-color, #FFC0CB));
-  color: white;
-  text-decoration: none;
-  border-radius: 12px;
-  font-size: 1.05rem;
-  font-weight: 700;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
-  cursor: pointer;
-  border: none;
-  font-family: inherit;
-  direction: rtl;
-}
-
-.block-article-link .article-link-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(255, 105, 180, 0.4);
-}
-
-.block-article-link .article-link-btn svg {
-  font-size: 0.9rem;
-}
-
-.block-article-link.align-right {
-  text-align: right;
-}
-
-.block-article-link.align-center {
-  text-align: center;
-}
-
-.block-article-link.align-left {
-  text-align: left;
-}
-
-.block-download-link .download-link-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  padding: 18px 40px;
-  background: linear-gradient(135deg, var(--primary-color, #FF69B4), var(--secondary-color, #FFC0CB));
-  color: white;
-  text-decoration: none;
-  border-radius: 16px;
-  font-size: 1.25rem;
-  font-weight: 700;
-  transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(255, 105, 180, 0.35);
-  cursor: pointer;
-  border: none;
-  font-family: inherit;
-  direction: rtl;
-}
-
-.block-download-link .download-link-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(255, 105, 180, 0.45);
-}
-
-.block-download-link .download-link-btn svg {
-  font-size: 1.15rem;
-}
-
-.block-download-link.align-right {
-  text-align: right;
-}
-
-.block-download-link.align-center {
-  text-align: center;
-}
-
-.block-download-link.align-left {
-  text-align: left;
-}
-
-.content-text {
-  max-width: 800px;
-  margin: 0 auto;
-  line-height: 2;
-  font-size: 1.1rem;
-  color: #333;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-  direction: rtl;
-  text-align: right;
-}
-
-.content-text p {
-  margin-bottom: 25px;
-  text-align: justify;
-  background: transparent;
-  border: none;
-  padding: 0;
-}
-
-/* First letter styling removed as per user request */
-
-.content-images {
-  max-width: 1000px;
-  margin: 60px auto 0;
-  padding-top: 40px;
-  border-top: 2px solid var(--bg-color);
-}
-
-.content-images h3 {
-  font-size: 1.8rem;
-  color: var(--text-color);
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-.images-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-}
-
-.content-image {
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: var(--transition);
-}
-
-.content-image:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.content-image img {
-  width: 100%;
-  height: 250px;
-  object-fit: cover;
-  display: block;
-}
-
-.article-footer {
-  padding: 40px;
-  background: var(--bg-color);
-  text-align: center;
-}
-
-.back-to-articles-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  color: white;
-  border: none;
-  padding: 15px 40px;
-  border-radius: 30px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
-}
-
-.back-to-articles-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(255, 105, 180, 0.4);
-}
-
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 60vh;
-  gap: 20px;
-}
-
-.spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid var(--bg-color);
-  border-top-color: var(--primary-color);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.not-found {
-  text-align: center;
-  padding: 100px 20px;
-}
-
-.not-found h2 {
-  font-size: 2rem;
-  color: var(--text-color);
-  margin-bottom: 30px;
-}
-
-.not-found .back-btn {
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 15px 40px;
-  border-radius: 30px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.not-found .back-btn:hover {
-  background: var(--secondary-color);
-  transform: translateY(-3px);
-}
-
-/* Responsive Design */
-@media (max-width: 992px) {
-  .article-header {
-    padding: 30px;
+import { API_BASE_URL } from '../config';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+import { motion } from 'framer-motion';
+import { FaArrowRight, FaCalendar, FaEye, FaUser, FaShareAlt, FaComments, FaPaperPlane, FaTrash, FaLink, FaFacebookF, FaTwitter, FaWhatsapp, FaTelegram, FaCopy, FaDownload } from 'react-icons/fa';
+import { getArticle, getArticles, getComments, addComment, deleteComment } from '../services/api';
+import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
+import '../styles/ArticleDetail.css';
+
+var ArticleDetail = function() {
+  var params = useParams();
+  var id = params.id;
+  var navigate = useNavigate();
+  var _s1 = useState(null);
+  var article = _s1[0], setArticle = _s1[1];
+  var _s2 = useState(true);
+  var loading = _s2[0], setLoading = _s2[1];
+  var _s3 = useState([]);
+  var comments = _s3[0], setComments = _s3[1];
+  var _s4 = useState('');
+  var commentText = _s4[0], setCommentText = _s4[1];
+  var _s5 = useState(false);
+  var submitting = _s5[0], setSubmitting = _s5[1];
+  var _s6 = useState([]);
+  var relatedArticles = _s6[0], setRelatedArticles = _s6[1];
+  var auth = useAuth();
+  var user = auth.user;
+  var isAuthenticated = auth.isAuthenticated;
+  var isAdmin = auth.isAdmin;
+
+  var loadComments = function() {
+    getComments(id).then(function(r) { setComments(Array.isArray(r.data) ? r.data : []); }).catch(function() {});
+  };
+
+  var handleAddComment = async function(e) {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+    setSubmitting(true);
+    try {
+      await addComment({ articleId: id, content: commentText.trim() });
+      setCommentText('');
+      loadComments();
+      toast.success('تم إضافة التعليق');
+    } catch (err) {
+      toast.error('خطأ في إضافة التعليق');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  var handleDeleteComment = async function(commentId) {
+    if (!window.confirm('هل أنت متأكد من حذف هذا التعليق؟')) return;
+    try {
+      await deleteComment(commentId);
+      loadComments();
+      toast.success('تم حذف التعليق');
+    } catch (err) {
+      toast.error('خطأ في حذف التعليق');
+    }
+  };
+
+  useEffect(function() {
+    setLoading(true);
+    getArticle(id).then(function(r) {
+      setArticle(r.data);
+      // Fetch related articles
+      if (r.data.relatedArticles && r.data.relatedArticles.length > 0) {
+        Promise.all(r.data.relatedArticles.map(function(rid) {
+          return getArticle(rid).then(function(res) { return res.data; }).catch(function() { return null; });
+        })).then(function(results) {
+          setRelatedArticles(results.filter(function(a) { return a !== null; }));
+        });
+      } else {
+        setRelatedArticles([]);
+      }
+    }).catch(function() { toast.error('خطأ في تحميل المقال'); }).finally(function() { setLoading(false); });
+    loadComments();
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  var formatDate = function(d) {
+    return new Date(d).toLocaleDateString('ar-DZ', { year: 'numeric', month: 'long', day: 'numeric' });
+  };
+
+  var getImageUrl = function(image) {
+    if (!image) return '';
+    if (image.startsWith('http') || image.startsWith('blob:')) return image;
+    return API_BASE_URL + image;
+  };
+
+  var getCategoryLabel = function(cat) {
+    var labels = { pregnancy: 'حملي', childcare: 'طفلي', home: 'بيتي', recipes: 'كوزينتي', education: 'مدرستي', trips: 'تحويستي', health: 'صحتي', religion: 'ديني', names: 'الأسماء' };
+    return labels[cat] || cat;
+  };
+
+  var extractVideoId = function(url) {
+    if (!url) return null;
+    var yt = url.match(/(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/);
+    if (yt) return { platform: 'youtube', id: yt[1] };
+    var vm = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+    if (vm) return { platform: 'vimeo', id: vm[1] };
+    return null;
+  };
+
+  var handleShare = function() {
+    var shareUrl = API_BASE_URL + '/share/article/' + id;
+    var title = article ? (article.titleAr || article.title) : '';
+    if (navigator.share) {
+      navigator.share({ title: title, url: shareUrl }).catch(function() {});
+    } else {
+      navigator.clipboard.writeText(shareUrl).then(function() {
+        toast.success('تم نسخ الرابط');
+      }).catch(function() {
+        toast.error('فشل نسخ الرابط');
+      });
+    }
+  };
+
+  if (loading) {
+    return React.createElement('div', { className: 'loading-container' },
+      React.createElement('div', { className: 'spinner' }),
+      React.createElement('p', null, 'جاري التحميل...')
+    );
   }
 
-  .article-header h1 {
-    font-size: 2rem;
+  if (!article) {
+    return React.createElement('div', { className: 'not-found' },
+      React.createElement('h2', null, 'المقال غير موجود'),
+      React.createElement('button', { onClick: function() { navigate('/articles'); }, className: 'back-btn' }, 'العودة')
+    );
   }
 
-  .article-image-container {
-    height: 400px;
-  }
+  var content = article.contentAr || article.content || '';
+  var articleTitle = article.titleAr || article.title;
+  var articleImage = article.image ? getImageUrl(article.image) : '';
+  var articleDesc = content.substring(0, 160);
+  var pageUrl = window.location.href;
 
-  .article-content {
-    padding: 40px 30px;
-  }
+  var renderBlocks = function() {
+    if (!article.contentBlocks || article.contentBlocks.length === 0) return null;
+    var sorted = [].concat(article.contentBlocks).sort(function(a, b) { return (a.order || 0) - (b.order || 0); });
+    return sorted.map(function(block, idx) {
+      var key = block.id || idx;
+      var settings = block.settings || {};
+      var align = settings.align || 'right';
+      var size = settings.size || settings.imageSize || settings.videoSize || 'large';
 
-  .content-text {
-    font-size: 1rem;
-  }
-}
+      if (block.type === 'heading') {
+        var tag = settings.size || settings.headingSize || 'h2';
+        if (['h1','h2','h3','h4'].indexOf(tag) === -1) tag = 'h2';
+        return React.createElement(motion.div, { key: key, className: 'content-block block-heading', initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true } },
+          React.createElement(tag, { style: { textAlign: align, direction: 'rtl' } }, block.content)
+        );
+      }
 
-@media (max-width: 768px) {
-  .article-detail-page {
-    padding: 20px 0;
-  }
+      if (block.type === 'paragraph') {
+        return React.createElement(motion.div, { key: key, className: 'content-block block-paragraph', initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true } },
+          React.createElement('div', { style: { textAlign: align, whiteSpace: 'pre-line', direction: 'rtl' } }, block.content)
+        );
+      }
 
-  .back-button {
-    padding: 10px 20px;
-    font-size: 0.9rem;
-  }
+      if (block.type === 'image' && block.imageUrl) {
+        return React.createElement(motion.div, { key: key, className: 'content-block block-image size-' + size + ' align-' + align, initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true } },
+          React.createElement('img', { src: getImageUrl(block.imageUrl), alt: 'content' })
+        );
+      }
 
-  .article-header {
-    padding: 30px 20px;
-  }
+      if (block.type === 'video' && block.videoUrl) {
+        var videoInfo = extractVideoId(block.videoUrl);
+        var embedUrl = null;
+        if (videoInfo && videoInfo.platform === 'youtube') {
+          embedUrl = 'https://www.youtube.com/embed/' + videoInfo.id;
+        } else if (videoInfo && videoInfo.platform === 'vimeo') {
+          embedUrl = 'https://player.vimeo.com/video/' + videoInfo.id;
+        }
+        if (!embedUrl) {
+          // Try using the URL directly as embed
+          if (block.videoUrl.indexOf('youtube.com/embed') !== -1 || block.videoUrl.indexOf('player.vimeo.com') !== -1) {
+            embedUrl = block.videoUrl;
+          }
+        }
+        if (embedUrl) {
+          return React.createElement(motion.div, { key: key, className: 'content-block block-video size-' + size + ' align-' + align, initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true } },
+            React.createElement('div', { className: 'video-wrapper' },
+              React.createElement('iframe', { src: embedUrl, frameBorder: '0', allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture', allowFullScreen: true, title: 'video' })
+            )
+          );
+        }
+        return null;
+      }
 
-  .article-header h1 {
-    font-size: 1.8rem;
-  }
+      if (block.type === 'article-link' && block.linkArticleId && block.linkText) {
+        return React.createElement(motion.div, { key: key, className: 'content-block block-article-link align-' + align, initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true } },
+          React.createElement('button', {
+            className: 'article-link-btn',
+            onClick: function() { navigate('/articles/' + block.linkArticleId); }
+          }, React.createElement(FaLink, null), ' ', block.linkText)
+        );
+      }
 
-  .article-meta {
-    gap: 15px;
-    font-size: 0.85rem;
-  }
+      if (block.type === 'download-link' && block.downloadLinkId && block.downloadText) {
+        return React.createElement(motion.div, { key: key, className: 'content-block block-download-link align-' + align, initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true } },
+          React.createElement('button', {
+            className: 'download-link-btn',
+            onClick: function() { window.open(API_BASE_URL + '/api/links/' + block.downloadLinkId + '/download', '_blank'); }
+          }, React.createElement(FaDownload, null), ' ', block.downloadText)
+        );
+      }
 
-  .article-content {
-    padding: 40px 20px;
-  }
+      return null;
+    });
+  };
 
-  .content-block h2 {
-    font-size: 1.6rem;
-  }
+  return React.createElement('div', { className: 'article-detail-page' },
+    React.createElement(Helmet, null,
+      React.createElement('title', null, articleTitle + ' | Maman Algérienne'),
+      React.createElement('meta', { name: 'description', content: articleDesc }),
+      React.createElement('meta', { property: 'og:title', content: articleTitle }),
+      React.createElement('meta', { property: 'og:description', content: articleDesc }),
+      React.createElement('meta', { property: 'og:image', content: articleImage }),
+      React.createElement('meta', { property: 'og:url', content: pageUrl }),
+      React.createElement('meta', { property: 'og:type', content: 'article' }),
+      React.createElement('meta', { name: 'twitter:card', content: 'summary_large_image' }),
+      React.createElement('meta', { name: 'twitter:title', content: articleTitle }),
+      React.createElement('meta', { name: 'twitter:description', content: articleDesc }),
+      React.createElement('meta', { name: 'twitter:image', content: articleImage })
+    ),
+    React.createElement('div', { className: 'container' },
+      React.createElement(motion.button, { className: 'back-button', onClick: function() { navigate('/articles'); }, initial: { opacity: 0, x: 20 }, animate: { opacity: 1, x: 0 } },
+        React.createElement(FaArrowRight, null), ' العودة إلى المقالات'
+      ),
+      React.createElement(motion.article, { className: 'article-detail', initial: { opacity: 0, y: 50 }, animate: { opacity: 1, y: 0 } },
+        React.createElement('div', { className: 'article-header' },
+          React.createElement('div', { className: 'article-meta-top' },
+            React.createElement('span', { className: 'article-category' }, getCategoryLabel(article.category)),
+            article.featured && React.createElement('span', { className: 'featured-badge' }, 'مميز')
+          ),
+          React.createElement('h1', null, articleTitle),
+          React.createElement('div', { className: 'article-meta' },
+            React.createElement('div', { className: 'meta-item' }, React.createElement(FaCalendar, null), React.createElement('span', null, formatDate(article.createdAt))),
+            React.createElement('div', { className: 'meta-item' }, React.createElement(FaEye, null), React.createElement('span', null, (article.views || 0) + ' مشاهدة')),
+            article.author && React.createElement('div', { className: 'meta-item' }, React.createElement(FaUser, null), React.createElement('span', null, article.author))
+          )
+        ),
+        article.image && React.createElement('div', { className: 'article-hero-image' },
+          React.createElement('img', { src: getImageUrl(article.image), alt: articleTitle })
+        ),
+        React.createElement('div', { className: 'article-content' },
+          article.contentBlocks && article.contentBlocks.length > 0
+            ? React.createElement('div', { className: 'flexible-content' }, renderBlocks())
+            : React.createElement('div', { className: 'content-text', style: { whiteSpace: 'pre-line', direction: 'rtl' } }, content),
+          article.contentImages && article.contentImages.length > 0 && (!article.contentBlocks || article.contentBlocks.length === 0) &&
+            React.createElement('div', { className: 'content-images' },
+              React.createElement('h3', null, 'صور إضافية'),
+              React.createElement('div', { className: 'images-grid' },
+                article.contentImages.map(function(img, i) {
+                  return React.createElement('div', { key: i, className: 'content-image' },
+                    React.createElement('img', { src: getImageUrl(img), alt: 'صورة ' + (i + 1) })
+                  );
+                })
+              )
+            )
+        ),
+        // Social Share Section
+        React.createElement('div', { className: 'social-share-section' },
+          React.createElement('h3', { className: 'share-section-title' }, React.createElement(FaShareAlt, null), ' شاركي هذا المقال'),
+          React.createElement('div', { className: 'share-buttons' },
+            React.createElement('button', {
+              className: 'share-icon-btn facebook',
+              onClick: function() { window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(API_BASE_URL + '/share/article/' + id), '_blank'); },
+              title: 'فيسبوك'
+            }, React.createElement(FaFacebookF, null), React.createElement('span', null, 'فيسبوك')),
+            React.createElement('button', {
+              className: 'share-icon-btn twitter',
+              onClick: function() { window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(API_BASE_URL + '/share/article/' + id) + '&text=' + encodeURIComponent(articleTitle), '_blank'); },
+              title: 'تويتر'
+            }, React.createElement(FaTwitter, null), React.createElement('span', null, 'تويتر')),
+            React.createElement('button', {
+              className: 'share-icon-btn whatsapp',
+              onClick: function() { window.open('https://wa.me/?text=' + encodeURIComponent(articleTitle + ' ' + API_BASE_URL + '/share/article/' + id), '_blank'); },
+              title: 'واتساب'
+            }, React.createElement(FaWhatsapp, null), React.createElement('span', null, 'واتساب')),
+            React.createElement('button', {
+              className: 'share-icon-btn telegram',
+              onClick: function() { window.open('https://t.me/share/url?url=' + encodeURIComponent(API_BASE_URL + '/share/article/' + id) + '&text=' + encodeURIComponent(articleTitle), '_blank'); },
+              title: 'تيليغرام'
+            }, React.createElement(FaTelegram, null), React.createElement('span', null, 'تيليغرام')),
+            React.createElement('button', {
+              className: 'share-icon-btn copy-link',
+              onClick: function() {
+                navigator.clipboard.writeText(API_BASE_URL + '/share/article/' + id).then(function() { toast.success('تم نسخ الرابط'); }).catch(function() { toast.error('فشل نسخ الرابط'); });
+              },
+              title: 'نسخ الرابط'
+            }, React.createElement(FaCopy, null), React.createElement('span', null, 'نسخ الرابط'))
+          )
+        ),
+        // Related Articles Section
+        relatedArticles.length > 0 && React.createElement('div', { className: 'related-articles-section' },
+          React.createElement('h3', { className: 'related-title' }, '📖 مقالات ذات صلة'),
+          React.createElement('div', { className: 'related-articles-grid' },
+            relatedArticles.map(function(ra) {
+              return React.createElement(motion.div, {
+                key: ra._id,
+                className: 'related-article-card',
+                whileHover: { y: -5 },
+                onClick: function() { navigate('/articles/' + ra._id); }
+              },
+                React.createElement('div', { className: 'related-article-image' },
+                  React.createElement('img', { src: getImageUrl(ra.image), alt: ra.titleAr || ra.title })
+                ),
+                React.createElement('div', { className: 'related-article-info' },
+                  React.createElement('h4', null, ra.titleAr || ra.title),
+                  React.createElement('p', null, (ra.contentAr || ra.content || '').substring(0, 80) + '...'),
+                  React.createElement('span', { className: 'related-read-more' }, 'اقرأ المزيد ←')
+                )
+              );
+            })
+          )
+        ),
+        // Comments Section
+        React.createElement('div', { className: 'comments-section' },
+          React.createElement('h3', { className: 'comments-title' }, React.createElement(FaComments, null), ' التعليقات (' + comments.length + ')'),
+          isAuthenticated
+            ? React.createElement('form', { className: 'comment-form', onSubmit: handleAddComment },
+                React.createElement('div', { className: 'comment-input-wrapper' },
+                  React.createElement('div', { className: 'comment-avatar' }, user && user.fullName ? user.fullName.charAt(0) : '؟'),
+                  React.createElement('textarea', { value: commentText, onChange: function(e) { setCommentText(e.target.value); }, placeholder: 'اكتب تعليقك هنا...', rows: '3', required: true })
+                ),
+                React.createElement('button', { type: 'submit', className: 'comment-submit-btn', disabled: submitting || !commentText.trim() },
+                  React.createElement(FaPaperPlane, null), submitting ? ' جاري الإرسال...' : ' أضف تعليق'
+                )
+              )
+            : React.createElement('div', { className: 'comment-login-prompt' },
+                React.createElement('p', null, 'قم ', React.createElement('span', { className: 'login-link', onClick: function() { navigate('/login'); } }, 'بتسجيل الدخول'), ' لإضافة تعليق')
+              ),
+          React.createElement('div', { className: 'comments-list' },
+            comments.length === 0
+              ? React.createElement('p', { className: 'no-comments' }, 'لا توجد تعليقات بعد. كن أول من يعلق!')
+              : comments.map(function(c) {
+                  return React.createElement(motion.div, { key: c._id, className: 'comment-card', initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 } },
+                    React.createElement('div', { className: 'comment-header' },
+                      React.createElement('div', { className: 'comment-user-info' },
+                        React.createElement('div', { className: 'comment-avatar-small' }, c.userName ? c.userName.charAt(0) : '؟'),
+                        React.createElement('div', null,
+                          React.createElement('span', { className: 'comment-author' }, c.userName),
+                          React.createElement('span', { className: 'comment-date' }, new Date(c.createdAt).toLocaleDateString('ar-DZ', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }))
+                        )
+                      ),
+                      (isAdmin || (user && c.user === user._id))
+                        ? React.createElement('button', { className: 'comment-delete-btn', onClick: function() { handleDeleteComment(c._id); }, title: 'حذف التعليق' }, React.createElement(FaTrash, null))
+                        : null
+                    ),
+                    React.createElement('p', { className: 'comment-content', style: { whiteSpace: 'pre-line' } }, c.content)
+                  );
+                })
+          )
+        ),
+        React.createElement('div', { className: 'article-footer' },
+          React.createElement(motion.button, { className: 'back-to-articles-btn', onClick: function() { navigate('/articles'); }, whileHover: { scale: 1.05 } },
+            React.createElement(FaArrowRight, null), ' العودة إلى جميع المقالات'
+          )
+        )
+      )
+    )
+  );
+};
 
-  .content-block h3 {
-    font-size: 1.3rem;
-  }
-
-  .content-block h4 {
-    font-size: 1.1rem;
-  }
-
-  .content-block p {
-    font-size: 1rem;
-    line-height: 1.8;
-  /* First letter styling removed */
-  }
-
-  .block-image.size-small,
-  .block-image.size-medium,
-  .block-image.size-large {
-    width: 100% !important;
-  }
-
-  .block-video.size-medium,
-  .block-video.size-large {
-    width: 100% !important;
-  }
-
-  .content-text {
-    font-size: 0.95rem;
-    line-height: 1.8;
-  /* First letter styling removed */
-  }
-
-  .content-images h3 {
-    font-size: 1.5rem;
-  }
-
-  .images-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .content-image img {
-    height: 200px;
-  }
-
-  .article-footer {
-    padding: 30px 20px;
-  }
-}
-
-/* Share Button */
-.share-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  background: linear-gradient(135deg, #4267B2, #5B7BD5);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-right: auto;
-}
-
-.share-btn:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
-.article-hero-image {
-  width: 100%;
-  max-height: 500px;
-  overflow: hidden;
-}
-
-.article-hero-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* ═══ SOCIAL SHARE SECTION ═══ */
-.social-share-section {
-  max-width: 800px;
-  margin: 40px auto 0;
-  padding: 30px 40px;
-  text-align: center;
-  border-top: 2px solid #f0f0f0;
-}
-
-.share-section-title {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  font-size: 1.3rem;
-  color: #2d3748;
-  margin-bottom: 20px;
-}
-
-.share-section-title svg { color: var(--primary-color, #FF69B4); }
-
-.share-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.share-icon-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 22px;
-  border: none;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  color: white;
-  transition: all 0.3s ease;
-  font-family: inherit;
-}
-
-.share-icon-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-}
-
-.share-icon-btn svg { font-size: 1.1rem; }
-
-.share-icon-btn.facebook { background: #1877F2; }
-.share-icon-btn.facebook:hover { background: #0d6efd; }
-.share-icon-btn.twitter { background: #1DA1F2; }
-.share-icon-btn.twitter:hover { background: #0d8ed9; }
-.share-icon-btn.whatsapp { background: #25D366; }
-.share-icon-btn.whatsapp:hover { background: #1ebe57; }
-.share-icon-btn.telegram { background: #0088cc; }
-.share-icon-btn.telegram:hover { background: #006da3; }
-.share-icon-btn.copy-link { background: linear-gradient(135deg, var(--primary-color, #FF69B4), var(--secondary-color, #FFC0CB)); }
-.share-icon-btn.copy-link:hover { opacity: 0.9; }
-
-/* ═══ RELATED ARTICLES SECTION ═══ */
-.related-articles-section {
-  max-width: 900px;
-  margin: 30px auto 0;
-  padding: 30px 40px;
-  border-top: 2px solid #f0f0f0;
-}
-
-.related-title {
-  font-size: 1.4rem;
-  color: #2d3748;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.related-articles-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 20px;
-}
-
-.related-article-card {
-  background: #f7fafc;
-  border-radius: 14px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-  direction: rtl;
-}
-
-.related-article-card:hover {
-  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-}
-
-.related-article-image {
-  width: 100%;
-  height: 140px;
-  overflow: hidden;
-}
-
-.related-article-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.related-article-card:hover .related-article-image img {
-  transform: scale(1.08);
-}
-
-.related-article-info {
-  padding: 14px;
-}
-
-.related-article-info h4 {
-  font-size: 0.95rem;
-  color: #2d3748;
-  margin: 0 0 6px;
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.related-article-info p {
-  font-size: 0.8rem;
-  color: #718096;
-  margin: 0 0 8px;
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.related-read-more {
-  font-size: 0.82rem;
-  color: var(--primary-color, #FF69B4);
-  font-weight: 700;
-}
-
-@media (max-width: 768px) {
-  .social-share-section { padding: 20px 15px; }
-  .share-buttons { gap: 8px; }
-  .share-icon-btn { padding: 10px 14px; font-size: 0.85rem; }
-  .share-icon-btn span { display: none; }
-  .share-icon-btn svg { font-size: 1.3rem; }
-  .related-articles-section { padding: 20px 15px; }
-  .related-articles-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-  .related-article-image { height: 110px; }
-  .related-article-info { padding: 10px; }
-  .related-article-info h4 { font-size: 0.85rem; }
-}
-
-/* ═══ COMMENTS SECTION ═══ */
-.comments-section { max-width: 800px; margin: 40px auto 0; padding: 30px 40px; border-top: 2px solid #f0f0f0; }
-.comments-title { display: flex; align-items: center; gap: 10px; font-size: 1.4rem; color: #2d3748; margin-bottom: 25px; }
-.comments-title svg { color: var(--primary-color, #FF69B4); }
-.comment-form { margin-bottom: 30px; }
-.comment-input-wrapper { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
-.comment-avatar { width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-color, #FF69B4), var(--secondary-color, #FFC0CB)); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; flex-shrink: 0; }
-.comment-form textarea { flex: 1; padding: 14px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1rem; font-family: inherit; resize: vertical; min-height: 80px; transition: border-color 0.3s ease; }
-.comment-form textarea:focus { outline: none; border-color: var(--primary-color, #FF69B4); }
-.comment-submit-btn { display: flex; align-items: center; gap: 8px; padding: 10px 24px; background: var(--primary-color, #FF69B4); color: white; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-right: 57px; }
-.comment-submit-btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
-.comment-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.comment-login-prompt { text-align: center; padding: 20px; background: #f7fafc; border-radius: 12px; margin-bottom: 25px; color: #4a5568; }
-.login-link { color: var(--primary-color, #FF69B4); font-weight: 600; cursor: pointer; text-decoration: underline; }
-.comments-list { display: flex; flex-direction: column; gap: 16px; }
-.no-comments { text-align: center; color: #a0aec0; font-size: 1rem; padding: 20px 0; }
-.comment-card { background: #f7fafc; border-radius: 12px; padding: 18px; transition: background 0.2s ease; }
-.comment-card:hover { background: #edf2f7; }
-.comment-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-.comment-user-info { display: flex; align-items: center; gap: 10px; }
-.comment-avatar-small { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-color, #FF69B4), var(--secondary-color, #FFC0CB)); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0; }
-.comment-author { display: block; font-weight: 600; color: #2d3748; font-size: 0.95rem; }
-.comment-date { display: block; font-size: 0.8rem; color: #a0aec0; margin-top: 2px; }
-.comment-delete-btn { background: none; border: none; color: #e53e3e; cursor: pointer; padding: 6px; border-radius: 6px; font-size: 0.9rem; opacity: 0.6; }
-.comment-delete-btn:hover { opacity: 1; background: #fed7d7; }
-.comment-content { color: #4a5568; line-height: 1.8; font-size: 1rem; margin: 0; padding-right: 46px; }
-
-@media (max-width: 768px) {
-  .comments-section { padding: 20px 15px; margin-top: 25px; }
-  .comments-title { font-size: 1.1rem; }
-  .comment-input-wrapper { flex-direction: column; gap: 10px; }
-  .comment-avatar { width: 38px; height: 38px; font-size: 1rem; }
-  .comment-form textarea { font-size: 16px; width: 100%; box-sizing: border-box; }
-  .comment-submit-btn { margin-right: 0; width: 100%; justify-content: center; padding: 12px; }
-  .comment-content { padding-right: 0; font-size: 0.95rem; }
-  .comment-card { padding: 14px; }
-  .comment-avatar-small { width: 32px; height: 32px; font-size: 0.8rem; }
-  .comment-login-prompt { padding: 15px; font-size: 0.95rem; }
-}
+export default ArticleDetail;
