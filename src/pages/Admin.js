@@ -3,7 +3,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FaHome, FaBox, FaNewspaper, FaAd, FaShoppingCart,
-  FaPalette, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaChartLine, FaDownload
+  FaPalette, FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaChartLine, FaDownload,
+  FaEye, FaUsers, FaFileExport, FaMobile, FaDesktop, FaTabletAlt, FaGlobe
 } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import {
@@ -12,9 +13,10 @@ import {
   getAds, createAd, updateAd, deleteAd,
   getOrders, updateOrder, deleteOrder,
   getTheme, updateTheme,
-  getStats,
+  getStats, getAnalytics, getAnalyticsExport,
   getLinks, createLink, updateLink, deleteLink
 } from '../services/api';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from 'recharts';
 import ArticleEditor from '../components/ArticleEditor';
 import '../styles/Admin.css';
 
@@ -27,6 +29,8 @@ const Admin = () => {
   const [orders, setOrders] = useState([]);
   const [theme, setTheme] = useState({});
   const [links, setLinks] = useState([]);
+  const [analytics, setAnalytics] = useState(null);
+  const [analyticsPeriod, setAnalyticsPeriod] = useState('30d');
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState('create');
   const [currentItem, setCurrentItem] = useState(null);
@@ -84,6 +88,10 @@ const Admin = () => {
         case 'links':
           const linksRes = await getLinks();
           setLinks(linksRes.data);
+          break;
+        case 'analytics':
+          const analyticsRes = await getAnalytics(analyticsPeriod);
+          setAnalytics(analyticsRes.data);
           break;
       }
     } catch (error) {
@@ -293,6 +301,12 @@ const Admin = () => {
           >
             <FaDownload /> التحميلات
           </button>
+          <button
+            className={activeTab === 'analytics' ? 'active' : ''}
+            onClick={() => setActiveTab('analytics')}
+          >
+            <FaEye /> التحليلات
+          </button>
         </nav>
       </aside>
 
@@ -329,6 +343,33 @@ const Admin = () => {
                   <p>الإيرادات</p>
                 </div>
               </div>
+              {stats.traffic && (
+                <>
+                  <h2 style={{ marginTop: '30px', marginBottom: '15px' }}>حركة الموقع (زيارات حقيقية)</h2>
+                  <div className="stats-grid">
+                    <div className="stat-card" style={{ borderRight: '4px solid #4CAF50' }}>
+                      <FaEye className="stat-icon" style={{ color: '#4CAF50' }} />
+                      <h3>{stats.traffic.todayViews}</h3>
+                      <p>مشاهدات اليوم</p>
+                    </div>
+                    <div className="stat-card" style={{ borderRight: '4px solid #2196F3' }}>
+                      <FaUsers className="stat-icon" style={{ color: '#2196F3' }} />
+                      <h3>{stats.traffic.todayUnique}</h3>
+                      <p>زوار اليوم</p>
+                    </div>
+                    <div className="stat-card" style={{ borderRight: '4px solid #FF9800' }}>
+                      <FaEye className="stat-icon" style={{ color: '#FF9800' }} />
+                      <h3>{stats.traffic.monthViews}</h3>
+                      <p>مشاهدات الشهر</p>
+                    </div>
+                    <div className="stat-card" style={{ borderRight: '4px solid #9C27B0' }}>
+                      <FaUsers className="stat-icon" style={{ color: '#9C27B0' }} />
+                      <h3>{stats.traffic.monthUnique}</h3>
+                      <p>زوار الشهر</p>
+                    </div>
+                  </div>
+                </>
+              )}
             </motion.div>
           )}
 
@@ -695,6 +736,218 @@ const Admin = () => {
                 </table>
               </div>
               {links.length === 0 && <p style={{ textAlign: 'center', color: '#999', marginTop: '40px' }}>لا توجد تحميلات بعد</p>}
+            </motion.div>
+          )}
+
+          {activeTab === 'analytics' && (
+            <motion.div
+              key="analytics"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+            >
+              <div className="section-header">
+                <h1>تحليلات الموقع</h1>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                  <select
+                    value={analyticsPeriod}
+                    onChange={async (e) => {
+                      setAnalyticsPeriod(e.target.value);
+                      try {
+                        var res = await getAnalytics(e.target.value);
+                        setAnalytics(res.data);
+                      } catch (err) { toast.error('خطأ في تحميل التحليلات'); }
+                    }}
+                    className="status-select"
+                    style={{ minWidth: '150px' }}
+                  >
+                    <option value="today">اليوم</option>
+                    <option value="7d">7 أيام</option>
+                    <option value="30d">30 يوم</option>
+                    <option value="90d">90 يوم</option>
+                  </select>
+                  <button
+                    className="add-btn"
+                    onClick={async () => {
+                      try {
+                        var res = await getAnalyticsExport(analyticsPeriod === 'today' ? 1 : analyticsPeriod === '7d' ? 7 : analyticsPeriod === '90d' ? 90 : 30);
+                        var blob = new Blob([JSON.stringify(res.data, null, 2)], { type: 'application/json' });
+                        var url = URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'analytics-report-' + new Date().toISOString().split('T')[0] + '.json';
+                        a.click();
+                        URL.revokeObjectURL(url);
+                        toast.success('تم تصدير التقرير');
+                      } catch (err) { toast.error('خطأ في التصدير'); }
+                    }}
+                  >
+                    <FaFileExport /> تصدير للرعاة
+                  </button>
+                </div>
+              </div>
+
+              {analytics ? (
+                <>
+                  <div className="stats-grid">
+                    <div className="stat-card" style={{ borderRight: '4px solid #4CAF50' }}>
+                      <FaEye className="stat-icon" style={{ color: '#4CAF50' }} />
+                      <h3>{analytics.totalPageViews.toLocaleString()}</h3>
+                      <p>إجمالي المشاهدات</p>
+                    </div>
+                    <div className="stat-card" style={{ borderRight: '4px solid #2196F3' }}>
+                      <FaUsers className="stat-icon" style={{ color: '#2196F3' }} />
+                      <h3>{analytics.uniqueVisitors.toLocaleString()}</h3>
+                      <p>زوار حقيقيون</p>
+                    </div>
+                    <div className="stat-card" style={{ borderRight: '4px solid #FF9800' }}>
+                      <FaChartLine className="stat-icon" style={{ color: '#FF9800' }} />
+                      <h3>{analytics.avgViewsPerDay}</h3>
+                      <p>متوسط المشاهدات/يوم</p>
+                    </div>
+                  </div>
+
+                  {analytics.viewsByDay && analytics.viewsByDay.length > 0 && (
+                    <div style={{ background: '#fff', borderRadius: '12px', padding: '20px', marginTop: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                      <h3 style={{ marginBottom: '15px' }}>المشاهدات اليومية</h3>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <LineChart data={analytics.viewsByDay}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          <Line type="monotone" dataKey="views" stroke="#FF69B4" name="مشاهدات" strokeWidth={2} />
+                          <Line type="monotone" dataKey="uniqueVisitors" stroke="#2196F3" name="زوار" strokeWidth={2} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  )}
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', marginTop: '20px' }}>
+                    {analytics.devices && analytics.devices.length > 0 && (
+                      <div style={{ background: '#fff', borderRadius: '12px', padding: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                        <h3 style={{ marginBottom: '15px' }}>الأجهزة</h3>
+                        <ResponsiveContainer width="100%" height={250}>
+                          <PieChart>
+                            <Pie
+                              data={analytics.devices.map(function(d) { return { name: d.device === 'mobile' ? 'هاتف' : d.device === 'tablet' ? 'لوح' : 'حاسوب', value: d.count }; })}
+                              cx="50%" cy="50%" outerRadius={80} dataKey="value" label={function(e) { return e.name + ' ' + Math.round(e.percent * 100) + '%'; }}
+                            >
+                              {['#FF69B4', '#2196F3', '#4CAF50'].map(function(color, i) { return <Cell key={i} fill={color} />; })}
+                            </Pie>
+                            <Tooltip />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
+
+                    {analytics.browsers && analytics.browsers.length > 0 && (
+                      <div style={{ background: '#fff', borderRadius: '12px', padding: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                        <h3 style={{ marginBottom: '15px' }}>المتصفحات</h3>
+                        <ResponsiveContainer width="100%" height={250}>
+                          <BarChart data={analytics.browsers.slice(0, 6)} layout="vertical">
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis type="number" />
+                            <YAxis dataKey="browser" type="category" width={80} />
+                            <Tooltip />
+                            <Bar dataKey="count" fill="#FF69B4" name="زيارات" radius={[0, 4, 4, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
+
+                    {analytics.operatingSystems && analytics.operatingSystems.length > 0 && (
+                      <div style={{ background: '#fff', borderRadius: '12px', padding: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                        <h3 style={{ marginBottom: '15px' }}>أنظمة التشغيل</h3>
+                        <ResponsiveContainer width="100%" height={250}>
+                          <PieChart>
+                            <Pie
+                              data={analytics.operatingSystems.map(function(d) { return { name: d.os, value: d.count }; })}
+                              cx="50%" cy="50%" outerRadius={80} dataKey="value" label={function(e) { return e.name + ' ' + Math.round(e.percent * 100) + '%'; }}
+                            >
+                              {['#FF69B4', '#4CAF50', '#2196F3', '#FF9800', '#9C27B0', '#607D8B'].map(function(color, i) { return <Cell key={i} fill={color} />; })}
+                            </Pie>
+                            <Tooltip />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
+
+                    {analytics.topReferrers && analytics.topReferrers.length > 0 && (
+                      <div style={{ background: '#fff', borderRadius: '12px', padding: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                        <h3 style={{ marginBottom: '15px' }}>مصادر الزيارات</h3>
+                        <div style={{ maxHeight: '250px', overflow: 'auto' }}>
+                          {analytics.topReferrers.map(function(r, i) {
+                            return (
+                              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #eee' }}>
+                                <span style={{ direction: 'ltr', textAlign: 'left', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '200px' }}>{r.referrer}</span>
+                                <strong>{r.count}</strong>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {analytics.topPages && analytics.topPages.length > 0 && (
+                    <div style={{ background: '#fff', borderRadius: '12px', padding: '20px', marginTop: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                      <h3 style={{ marginBottom: '15px' }}>أكثر الصفحات زيارة</h3>
+                      <table className="admin-table">
+                        <thead>
+                          <tr>
+                            <th>الصفحة</th>
+                            <th>المشاهدات</th>
+                            <th>الزوار</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {analytics.topPages.map(function(p, i) {
+                            return (
+                              <tr key={i}>
+                                <td style={{ direction: 'ltr', textAlign: 'left' }}>{p.path}</td>
+                                <td>{p.views}</td>
+                                <td>{p.uniqueVisitors}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {analytics.utmCampaigns && analytics.utmCampaigns.length > 0 && (
+                    <div style={{ background: '#fff', borderRadius: '12px', padding: '20px', marginTop: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                      <h3 style={{ marginBottom: '15px' }}>حملات التسويق (UTM)</h3>
+                      <table className="admin-table">
+                        <thead>
+                          <tr>
+                            <th>المصدر</th>
+                            <th>الوسيط</th>
+                            <th>الحملة</th>
+                            <th>الزيارات</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {analytics.utmCampaigns.map(function(c, i) {
+                            return (
+                              <tr key={i}>
+                                <td>{c.source}</td>
+                                <td>{c.medium || '-'}</td>
+                                <td>{c.campaign || '-'}</td>
+                                <td>{c.count}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p style={{ textAlign: 'center', color: '#999', marginTop: '40px' }}>جاري تحميل التحليلات...</p>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

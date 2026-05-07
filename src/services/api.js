@@ -82,4 +82,9 @@ export const getAllComments = () => api.get('/comments');
 export const addComment = (data) => api.post('/comments', data);
 export const deleteComment = (id) => api.delete('/comments/' + id);
 
+// Analytics
+export const trackPageView = (data) => api.post('/track', data);
+export const getAnalytics = (period) => api.get('/analytics', { params: { period } });
+export const getAnalyticsExport = (days) => api.get('/analytics/export', { params: { days } });
+
 export default api;
